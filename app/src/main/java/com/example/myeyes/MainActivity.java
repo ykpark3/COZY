@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Context mContext;
     private SpeechRecognizerClient client;
     private static final int REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE = 0;
+    private boolean isPermissionGranted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,22 +39,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        //권한을 확인하는 부분123123
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            //둘중 하나라도
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO) && ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE);
             } else {
                 // 사용자가 거부하면서 다시 묻지 않기를 클릭.. 권한이 없다고 사용자에게 직접 알림.
-                Toast.makeText(this, "권한이 없습니다..", Toast.LENGTH_SHORT).show();
-                //ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.RECORD_AUDIO},5);
-                //ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},3);
+                Toast.makeText(this, "권한 없습니다.", Toast.LENGTH_SHORT).show();
             }
         } else {
+            // sdk 초기화
+            SpeechRecognizerManager.getInstance().initializeLibrary(this);
+            isPermissionGranted = true;
             //startUsingSpeechSDK();
         }
-
-        // sdk 초기화
-        SpeechRecognizerManager.getInstance().initializeLibrary(this);
-
 
         /*
         // 클라이언트 생성
@@ -73,22 +75,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    //퍼미션 체크 후 콜백 메소드
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE:
+
+                //동의한경우
                 if (grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    //startUsingSpeechSDK();
-                } else {
-                    finish();
+                    Toast.makeText(this, "권한에 동의했습니다.", Toast.LENGTH_SHORT).show();
+                    SpeechRecognizerManager.getInstance().initializeLibrary(this);
+                    isPermissionGranted = true;
+                }
+                //동의하지 않은 경우
+                else {
+                    Toast.makeText(this, "권한이 없습니다.", Toast.LENGTH_SHORT).show();
                 }
                 break;
+
             default:
                 break;
         }
     }
 
     public void mikeButton(View view) {
+
+        //권한이 충족됐을때만 이벤트 실행
+        if(!isPermissionGranted){
+            Toast.makeText(this, "권한이 없습니다.", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE);
+            return;
+        }
+
         int id = view.getId();
         String serviceType = SpeechRecognizerClient.SERVICE_TYPE_WEB;
 
