@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE);
             } else {
                 // 사용자가 거부하면서 다시 묻지 않기를 클릭.. 권한이 없다고 사용자에게 직접 알림.
+                Toast.makeText(this, "권한이 없습니다..", Toast.LENGTH_SHORT).show();
+                //ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.RECORD_AUDIO},5);
+                //ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},3);
             }
         } else {
             //startUsingSpeechSDK();
@@ -52,20 +55,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SpeechRecognizerManager.getInstance().initializeLibrary(this);
 
 
+        /*
         // 클라이언트 생성
         String userdict = "";
         SpeechRecognizerClient.Builder builder = new SpeechRecognizerClient.Builder().
                setServiceType(SpeechRecognizerClient.SERVICE_TYPE_WEB).
                 setUserDictionary(userdict);  // optional
 
-        client = builder.build();
+        client = builder.build();*/
         //getHashKey(this);
     }
 
     public void onDestroy() {
         super.onDestroy();
         // API를 더이상 사용하지 않을 때 finalizeLibrary()를 호출한다.
-
         SpeechRecognizerManager.getInstance().finalizeLibrary();
     }
 
@@ -86,12 +89,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void mikeButton(View view) {
-
-    }
-
-
-    @Override
-    public void onClick(View view) {
         int id = view.getId();
         String serviceType = SpeechRecognizerClient.SERVICE_TYPE_WEB;
 
@@ -102,6 +99,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         client.startRecording(true);
         Log.d("dsad", "finish");
         Toast.makeText(this, "음성인식을 시작합니다.", Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public void onClick(View view) {
+
     }
 
     @Override
@@ -122,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onError(int errorCode, String errorMsg) {
-
+        Log.d("error","error");
     }
 
     @Override
@@ -140,7 +143,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.d("MainActivity", "Result: " + texts);
 
 
-        /*
         for (int i = 0; i < texts.size(); i++) {
             builder.append(texts.get(i));
             builder.append(" (");
@@ -148,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             builder.append(")\n");
         }
 
-        /*
+
         //모든 콜백함수들은 백그라운드에서 돌고 있기 때문에 메인 UI를 변경할려면 runOnUiThread를 사용해야 한다.
         final Activity activity = this;
         runOnUiThread(new Runnable() {
@@ -157,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (activity.isFinishing()) return;
 
             }
-        });*/
+        });
 
     }
 
