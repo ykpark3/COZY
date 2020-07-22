@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -14,22 +13,20 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kakao.sdk.newtoneapi.SpeechRecognizeListener;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerClient;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerManager;
+import com.kakao.sdk.newtoneapi.TextToSpeechClient;
+import com.kakao.sdk.newtoneapi.TextToSpeechManager;
 
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, SpeechRecognizeListener {
+public class MainActivity extends AppCompatActivity{
 
     private Context mContext;
-    private SpeechRecognizerClient client;
+    private SpeechRecognizerClient sttClient;
+    private TextToSpeechClient ttsClient;
     private static final int REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE = 0;
     private boolean isPermissionGranted = false;
 
@@ -44,25 +41,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //권한 요청
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE);
         } else {
+            //모든 권한이 퍼미션되어있는 경우 실행.
             startUsingSpeechAPI();
         }
 
-        /*
-        // 클라이언트 생성
-        String userdict = "";
-        SpeechRecognizerClient.Builder builder = new SpeechRecognizerClient.Builder().
-               setServiceType(SpeechRecognizerClient.SERVICE_TYPE_WEB).
-                setUserDictionary(userdict);  // optional
+        //getHashKey(this); 해서키보는 메소드
+    }
 
-        client = builder.build();*/
-        //getHashKey(this);
+    public void mikeButton(View view) {
+
+        //권한이 충족됐을때만 이벤트 실행
+        if (!isPermissionGranted) {
+            checkPermissionGranted();
+            return;
+        }
+
+        sttClient.setSpeechRecognizeListener(new SpeechAPI());
+        sttClient.startRecording(true);
+
+        Toast.makeText(this, "음성인식을 시작합니다.", Toast.LENGTH_SHORT).show();
     }
 
     public void startUsingSpeechAPI() {
+        String serviceType = SpeechRecognizerClient.SERVICE_TYPE_WEB;
         //sdk 초기화
         SpeechRecognizerManager.getInstance().initializeLibrary(this);
+        TextToSpeechManager.getInstance().initializeLibrary(getApplicationContext());
         //퍼미션 flag true
         isPermissionGranted = true;
+
+        //stt 클라이언트 생성
+        SpeechRecognizerClient.Builder builder = new SpeechRecognizerClient.Builder().setServiceType(serviceType);
+        sttClient = builder.build();
     }
 
     public void checkPermissionGranted() {
@@ -87,8 +97,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
         // API를 더이상 사용하지 않을 때 finalizeLibrary()를 호출한다.
         SpeechRecognizerManager.getInstance().finalizeLibrary();
+        TextToSpeechManager.getInstance().finalizeLibrary();
     }
-
 
     //퍼미션 체크 후 콜백 메소드
     @Override
@@ -96,12 +106,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (requestCode) {
             case REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE:
 
-                //동의한경우
+                //모든 권한에 동의한경우 start 메소드 실행
                 if (grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "권한 승인에 동의했습니다.", Toast.LENGTH_SHORT).show();
-                    SpeechRecognizerManager.getInstance().initializeLibrary(this);
-                    //권한동의 flag
-                    isPermissionGranted = true;
+                    startUsingSpeechAPI();
                 }
                 //동의하지 않은 경우
                 else {
@@ -112,98 +120,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
-    }
-
-    public void mikeButton(View view) {
-
-        //권한이 충족됐을때만 이벤트 실행
-        if (!isPermissionGranted) {
-            checkPermissionGranted();
-           return;
-        }
-
-        int id = view.getId();
-        String serviceType = SpeechRecognizerClient.SERVICE_TYPE_WEB;
-
-        SpeechRecognizerClient.Builder builder = new SpeechRecognizerClient.Builder().setServiceType(serviceType);
-        client = builder.build();
-
-        client.setSpeechRecognizeListener(this);
-        client.startRecording(true);
-        Log.d("dsad", "finish");
-        Toast.makeText(this, "음성인식을 시작합니다.", Toast.LENGTH_SHORT).show();
-    }
-
-
-    @Override
-    public void onClick(View view) {
-
-    }
-
-    @Override
-    public void onReady() {
-        Log.d("MainActivity", "모든 준비가 완료 되었습니다.");
-
-    }
-
-    @Override
-    public void onBeginningOfSpeech() {
-        Log.d("MainActivity", "말하기 시작 했습니다.");
-    }
-
-    @Override
-    public void onEndOfSpeech() {
-        Log.d("MainActivity", "말하기가 끝났습니다.");
-    }
-
-    @Override
-    public void onError(int errorCode, String errorMsg) {
-        Log.d("error", "error");
-    }
-
-    @Override
-    public void onPartialResult(String partialResult) {
-
-    }
-
-    @Override
-    public void onResults(Bundle results) {
-        final StringBuilder builder = new StringBuilder();
-
-        final ArrayList<String> texts = results.getStringArrayList(SpeechRecognizerClient.KEY_RECOGNITION_RESULTS);
-        ArrayList<Integer> confs = results.getIntegerArrayList(SpeechRecognizerClient.KEY_CONFIDENCE_VALUES);
-
-        Log.d("MainActivity", "Result: " + texts);
-
-
-        for (int i = 0; i < texts.size(); i++) {
-            builder.append(texts.get(i));
-            builder.append(" (");
-            builder.append(confs.get(i).intValue());
-            builder.append(")\n");
-        }
-
-
-        //모든 콜백함수들은 백그라운드에서 돌고 있기 때문에 메인 UI를 변경할려면 runOnUiThread를 사용해야 한다.
-        final Activity activity = this;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (activity.isFinishing()) return;
-
-            }
-        });
-
-    }
-
-    @Override
-    public void onAudioLevel(float audioLevel) {
-
-    }
-
-    @Override
-    public void onFinished() {
-
     }
 
     //해쉬키 구하는 메소드
