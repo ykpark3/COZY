@@ -38,23 +38,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        //권한을 확인하는 부분123123123123123
+        //권한을 확인하는 부분, 권한 중 하나라도 퍼미션 거부되어있는 경우우
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
-            //둘중 하나라도
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO) && ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE);
-            } else {
-                // 사용자가 거부하면서 다시 묻지 않기를 클릭.. 권한이 없다고 사용자에게 직접 알림.
-                Toast.makeText(this, "권한 없습니다.", Toast.LENGTH_SHORT).show();
-            }
+            //권한 요청
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE);
         } else {
-            // sdk 초기화
-            SpeechRecognizerManager.getInstance().initializeLibrary(this);
-            isPermissionGranted = true;
-            //startUsingSpeechSDK();
+            startUsingSpeechAPI();
         }
 
         /*
@@ -66,6 +56,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         client = builder.build();*/
         //getHashKey(this);
+    }
+
+    public void startUsingSpeechAPI() {
+        //sdk 초기화
+        SpeechRecognizerManager.getInstance().initializeLibrary(this);
+        //퍼미션 flag true
+        isPermissionGranted = true;
+    }
+
+    public void checkPermissionGranted() {
+
+        //권한을 확인하는 부분, 권한 중 하나라도 퍼미션 거부되어있는 경우
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            //사용자가 맨 처음에 거절을 눌러서 하나라도 퍼미션이 거부된 경우
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE);
+            } else {
+                // 사용자가 거부하면서 다시 묻지 않기를 클릭 -> 권한이 없다고 사용자에게 직접 알림.
+                Toast.makeText(this, "권한 Permission이 거부됐습니다. 어플을 사용하시려면 설정(앱 정보)에서 Permission을 허용해야 합니다.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            startUsingSpeechAPI();
+        }
     }
 
     public void onDestroy() {
@@ -83,13 +98,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 //동의한경우
                 if (grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "권한에 동의했습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "권한 승인에 동의했습니다.", Toast.LENGTH_SHORT).show();
                     SpeechRecognizerManager.getInstance().initializeLibrary(this);
+                    //권한동의 flag
                     isPermissionGranted = true;
                 }
                 //동의하지 않은 경우
                 else {
-                    Toast.makeText(this, "권한이 없습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "권한 승인에 거절하셨습니다.", Toast.LENGTH_SHORT).show();
                 }
                 break;
 
@@ -101,10 +117,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void mikeButton(View view) {
 
         //권한이 충족됐을때만 이벤트 실행
-        if(!isPermissionGranted){
-            Toast.makeText(this, "권한이 없습니다.", Toast.LENGTH_SHORT).show();
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE);
-            return;
+        if (!isPermissionGranted) {
+            checkPermissionGranted();
+           return;
         }
 
         int id = view.getId();
@@ -143,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onError(int errorCode, String errorMsg) {
-        Log.d("error","error");
+        Log.d("error", "error");
     }
 
     @Override
