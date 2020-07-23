@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.kakao.sdk.newtoneapi.SpeechRecognizerClient;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerManager;
-import com.kakao.sdk.newtoneapi.TextToSpeechClient;
 import com.kakao.sdk.newtoneapi.TextToSpeechManager;
 
 import java.security.MessageDigest;
@@ -26,9 +25,9 @@ public class MainActivity extends AppCompatActivity{
 
     private Context mContext;
     private SpeechRecognizerClient sttClient;
-    private TextToSpeechClient ttsClient;
     private static final int REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE = 0;
     private boolean isPermissionGranted = false;
+    private STTAPI speechAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +54,10 @@ public class MainActivity extends AppCompatActivity{
             checkPermissionGranted();
             return;
         }
+        speechAPI = new STTAPI();
 
-        sttClient.setSpeechRecognizeListener(new SpeechAPI());
-        sttClient.startRecording(true);
+        sttClient.setSpeechRecognizeListener(speechAPI);
+        sttClient.startRecording( false);
 
         Toast.makeText(this, "음성인식을 시작합니다.", Toast.LENGTH_SHORT).show();
     }
