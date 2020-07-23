@@ -13,10 +13,12 @@ import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.kakao.sdk.newtoneapi.SpeechRecognizerClient;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerManager;
+import com.kakao.sdk.newtoneapi.TextToSpeechClient;
 import com.kakao.sdk.newtoneapi.TextToSpeechManager;
 
 import java.security.MessageDigest;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity{
 
     private Context mContext;
     private SpeechRecognizerClient sttClient;
+    public TextToSpeechClient ttsClient;
     private static final int REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE = 0;
     private boolean isPermissionGranted = false;
     private STTAPI speechAPI;
@@ -44,7 +47,21 @@ public class MainActivity extends AppCompatActivity{
             startUsingSpeechAPI();
         }
 
+        //tts 클라이언트 생성
+        ttsClient = new TextToSpeechClient.Builder()
+                .setSpeechMode(TextToSpeechClient.NEWTONE_TALK_1)     // 음성합성방식
+                .setSpeechSpeed(1.0)            // 발음 속도(0.5~4.0)
+                .setSpeechVoice(TextToSpeechClient.VOICE_WOMAN_READ_CALM)  //TTS 음색 모드 설정(여성 차분한 낭독체)
+                .setListener(new TTSAPI())
+                .build();
+
         //getHashKey(this); 해서키보는 메소드
+    }
+
+    public void speakButtonText(View view){
+        Button button = (Button)findViewById(R.id.button1);
+        String buttonString = button.getText().toString();
+        ttsClient.play(buttonString);
     }
 
     public void mikeButton(View view) {
@@ -56,10 +73,12 @@ public class MainActivity extends AppCompatActivity{
         }
         speechAPI = new STTAPI();
 
+        //ttsClient.play("듣고 있어요."); 띠링? 같은 소리가 들리면 좋겟다!
+
+        Toast.makeText(this, "음성인식을 시작합니다.", Toast.LENGTH_SHORT).show();
         sttClient.setSpeechRecognizeListener(speechAPI);
         sttClient.startRecording( false);
 
-        Toast.makeText(this, "음성인식을 시작합니다.", Toast.LENGTH_SHORT).show();
     }
 
     public void startUsingSpeechAPI() {
