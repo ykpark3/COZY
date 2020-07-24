@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity{
 
         //tts 클라이언트 생성
         ttsClient = new TextToSpeechClient.Builder()
-                .setSpeechMode(TextToSpeechClient.NEWTONE_TALK_1)     // 음성합성방식
+                .setSpeechMode(TextToSpeechClient.NEWTONE_TALK_2)     // 음성합성방식
                 .setSpeechSpeed(1.0)            // 발음 속도(0.5~4.0)
                 .setSpeechVoice(TextToSpeechClient.VOICE_WOMAN_READ_CALM)  //TTS 음색 모드 설정(여성 차분한 낭독체)
                 .setListener(new TTSAPI())
@@ -58,10 +58,29 @@ public class MainActivity extends AppCompatActivity{
         //getHashKey(this); 해서키보는 메소드
     }
 
-    public void speakButtonText(View view){
-        Button button = (Button)findViewById(R.id.button1);
-        String buttonString = button.getText().toString();
+    public void speakButtonText(Button button){
+        String buttonString = button.getText().toString().replace("\n"," ");
         ttsClient.play(buttonString);
+    }
+
+    public void coronaInformationButton(View view){
+        Button button = findViewById(R.id.button1);
+        speakButtonText(button);
+    }
+
+    public void movingLineButton(View view){
+        Button button = findViewById(R.id.button2);
+        speakButtonText(button);
+    }
+
+    public void compareMovingLineButton(View view){
+        Button button = findViewById(R.id.button3);
+        speakButtonText(button);
+    }
+
+    public void myInformationButton(View view){
+        Button button = findViewById(R.id.button4);
+        speakButtonText(button);
     }
 
     public void mikeButton(View view) {

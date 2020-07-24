@@ -4,107 +4,106 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E8E8E8"
+    android:background="@drawable/background"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3">
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/button1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_margin="1dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
             android:layout_weight="1"
-            android:background="@drawable/button"
-            android:drawableBottom="@drawable/button1image1"
-            android:gravity="start"
-            android:lineSpacingExtra="-10dp"
-            android:onClick="speakButtonText"
-            android:paddingLeft="5dp"
-            android:paddingTop="1dp"
-            android:text="코로나\n정보"
-            android:textColor="#FFFFFF"
-            android:textSize="50dp" />
+            android:background="@drawable/button2"
+            android:drawableRight="@drawable/virus"
+            android:gravity="start|center_vertical"
+            android:onClick="coronaInformationButton"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="코로나 정보"
+            android:textSize="30dp" />
 
         <Button
             android:id="@+id/button2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_margin="1dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@drawable/button"
-            android:drawableBottom="@drawable/button2image"
-            android:gravity="start"
-            android:lineSpacingExtra="-10dp"
-            android:onClick="speakButtonText"
-            android:paddingLeft="5dp"
-            android:paddingTop="1dp"
-            android:text="확진자\n동선"
-            android:textColor="#FFFFFF"
-            android:textSize="50dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3">
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/button2"
+            android:drawableRight="@drawable/coronavirus"
+            android:onClick="movingLineButton"
+            android:text="확진자 동선"
+            android:textSize="30dp"
+            android:gravity="start|center_vertical"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            />
 
         <Button
             android:id="@+id/button3"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_margin="1dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
             android:layout_weight="1"
-            android:background="@drawable/button"
-            android:drawableBottom="@drawable/button3image"
-            android:gravity="start"
-            android:lineSpacingExtra="-10dp"
-            android:onClick="speakButtonText"
-            android:paddingLeft="5dp"
-            android:paddingTop="1dp"
-            android:text="동선\n비교"
-            android:textColor="#FFFFFF"
-            android:textSize="50dp" />
+            android:background="@drawable/button2"
+            android:gravity="start|center_vertical"
+            android:drawableRight="@drawable/distance"
+            android:onClick="compareMovingLineButton"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="동선 비교"
+            android:textSize="30dp" />
 
         <Button
             android:id="@+id/button4"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_margin="1dp"
+            android:drawableRight="@drawable/settings1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@drawable/button"
-            android:drawableBottom="@drawable/button4image"
-            android:gravity="start"
-            android:lineSpacingExtra="-10dp"
-            android:onClick="speakButtonText"
-            android:paddingLeft="5dp"
-            android:paddingTop="1dp"
-            android:text="나의\n정보"
-            android:textColor="#FFFFFF"
-            android:textSize="50dp" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2">
+            android:background="@drawable/button2"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp"
+            android:onClick="myInformationButton"
+            android:text="내 정보"
+            android:textSize="30dp"
+            android:gravity="start|center_vertical"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"/>
 
         <ImageButton
             android:id="@+id/button13"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+
             android:adjustViewBounds="true"
-            android:background="#E8E8E8"
+            android:background="@drawable/button"
             android:onClick="mikeButton"
             android:paddingTop="30dp"
             android:paddingBottom="30dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/mike"
+            android:src="@drawable/ttt2"
             android:text="마이크" />
     </LinearLayout>
 </LinearLayout>

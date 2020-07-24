@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="mikeButtonConnerValue">10dp</dimen>
+    <dimen name="mikeButtonConnerValue">70dp</dimen>
+    <dimen name="mikeButton2ConnerValue">10dp</dimen>
+
+
 </resources>
