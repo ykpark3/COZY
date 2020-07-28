@@ -9,101 +9,27 @@
     tools:context=".MainActivity">
 
     <LinearLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="7.5"
         android:orientation="vertical">
 
     </LinearLayout>
 
-    <LinearLayout
+    <ImageButton
+        android:id="@+id/button13"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5"
-        android:orientation="vertical">
+        android:layout_weight="2"
 
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
-            android:layout_weight="1"
-            android:background="@drawable/button2"
-            android:drawableRight="@drawable/virus"
-            android:gravity="start|center_vertical"
-            android:onClick="coronaInformationButton"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:text="코로나 정보"
-            android:textSize="30dp" />
+        android:adjustViewBounds="true"
+        android:background="@drawable/button"
+        android:onClick="mikeButton"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ttt2"
+        android:text="마이크" />
 
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/button2"
-            android:drawableRight="@drawable/coronavirus"
-            android:onClick="movingLineButton"
-            android:text="확진자 동선"
-            android:textSize="30dp"
-            android:gravity="start|center_vertical"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            />
-
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
-            android:layout_weight="1"
-            android:background="@drawable/button2"
-            android:gravity="start|center_vertical"
-            android:drawableRight="@drawable/distance"
-            android:onClick="compareMovingLineButton"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"
-            android:text="동선 비교"
-            android:textSize="30dp" />
-
-        <Button
-            android:id="@+id/button4"
-            android:drawableRight="@drawable/settings1"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/button2"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
-            android:onClick="myInformationButton"
-            android:text="내 정보"
-            android:textSize="30dp"
-            android:gravity="start|center_vertical"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp"/>
-
-        <ImageButton
-            android:id="@+id/button13"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="2"
-
-            android:adjustViewBounds="true"
-            android:background="@drawable/button"
-            android:onClick="mikeButton"
-            android:paddingTop="30dp"
-            android:paddingBottom="30dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ttt2"
-            android:text="마이크" />
-    </LinearLayout>
 </LinearLayout>

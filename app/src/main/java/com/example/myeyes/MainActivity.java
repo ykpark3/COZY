@@ -3,6 +3,9 @@ package com.example.myeyes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.JobIntentService;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.Context;
@@ -10,27 +13,44 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myeyes.fragment.ComparisionMovingLineFragment;
+import com.example.myeyes.fragment.CoronaInformationFragment;
+import com.example.myeyes.fragment.IntroFragment;
+import com.example.myeyes.fragment.MovingLineFragment;
+import com.example.myeyes.fragment.SetUpFragment;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerClient;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerManager;
 import com.kakao.sdk.newtoneapi.TextToSpeechClient;
 import com.kakao.sdk.newtoneapi.TextToSpeechManager;
 
 import java.security.MessageDigest;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity{
 
+    private FragmentManager fragmentManager;
     private Context mContext;
     private SpeechRecognizerClient sttClient;
     public TextToSpeechClient ttsClient;
     private static final int REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE = 0;
     private boolean isPermissionGranted = false;
     private STTAPI speechAPI;
+
+    public MainActivity(){ }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +75,11 @@ public class MainActivity extends AppCompatActivity{
                 .setListener(new TTSAPI())
                 .build();
 
-        //getHashKey(this); 해서키보는 메소드
+        //init 시 intro fragment를 삽입
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.fragment_container,new IntroFragment());
+        fragmentTransaction.commit();
     }
 
     public void speakButtonText(Button button){
@@ -63,24 +87,73 @@ public class MainActivity extends AppCompatActivity{
         ttsClient.play(buttonString);
     }
 
-    public void coronaInformationButton(View view){
+    public void coronaInformationButton (View view){
+        //권한이 충족됐을때만 이벤트 실행
+        if (!isPermissionGranted) {
+            checkPermissionGranted();
+            return;
+        }
+
         Button button = findViewById(R.id.button1);
         speakButtonText(button);
+
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.replace(R.id.fragment_container,new CoronaInformationFragment());
+        fragmentTransaction.commit();
     }
 
     public void movingLineButton(View view){
+        //권한이 충족됐을때만 이벤트 실행
+        if (!isPermissionGranted) {
+            checkPermissionGranted();
+            return;
+        }
+
         Button button = findViewById(R.id.button2);
         speakButtonText(button);
+
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.replace(R.id.fragment_container,new MovingLineFragment());
+        fragmentTransaction.commit();
     }
 
-    public void compareMovingLineButton(View view){
+    public void comparisionMovingLineButton(View view){
+        //권한이 충족됐을때만 이벤트 실행
+        if (!isPermissionGranted) {
+            checkPermissionGranted();
+            return;
+        }
+
         Button button = findViewById(R.id.button3);
         speakButtonText(button);
+
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.replace(R.id.fragment_container,new ComparisionMovingLineFragment());
+        fragmentTransaction.commit();
     }
 
-    public void myInformationButton(View view){
+    public void setUpButton(View view){
+        //권한이 충족됐을때만 이벤트 실행
+        if (!isPermissionGranted) {
+            checkPermissionGranted();
+            return;
+        }
+
         Button button = findViewById(R.id.button4);
         speakButtonText(button);
+
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.replace(R.id.fragment_container,new SetUpFragment());
+        fragmentTransaction.commit();
+
     }
 
     public void mikeButton(View view) {
