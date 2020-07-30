@@ -1,29 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="350dp"
     android:layout_height="300dp"
-    android:background="@drawable/button2"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/adrress_dialog"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="15dp"
-        android:textColor="#5776ff"
-        android:textSize="30dp"
-        android:textStyle="bold"
-        android:gravity="center"
         android:layout_weight="1"
-        android:text="주소 등록하기" />
+        android:text="주소 등록하기"
+        android:textColor="#5776ff"
+        android:paddingTop="10dp"
+        android:paddingLeft="15dp"
+        android:textSize="25dp"
+        android:textStyle="bold" />
 
     <Spinner
         android:id="@+id/adrress_dialog_spinner"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/button2"
+        android:spinnerMode="dropdown"
+        android:layout_margin="10dp"
+        android:textSize="20dp"
+        />
+
+    <Spinner
+        android:id="@+id/adrress2_dialog_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
         android:spinnerMode="dropdown" />
 
     <LinearLayout
@@ -35,15 +45,17 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="등록하기"
-            android:background="@drawable/button2"/>
+            android:textSize="20dp"
+            style="?android:attr/borderlessButtonStyle"
+            android:text="등록하기" />
+
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="취소하기"
-            android:background="@drawable/button2"
-            />
+            style="?android:attr/borderlessButtonStyle"
+            android:textSize="20dp"
+            android:text="취소하기" />
     </LinearLayout>
 
 

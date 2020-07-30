@@ -41,7 +41,7 @@ public class MovingLineFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 AdrressDialog adrressDialog = new AdrressDialog(getActivity());
-                adrressDialog.callFunction();
+                adrressDialog.makeAdrressDialog();
             }
         });
     }
