@@ -1,26 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="300dp"
+    android:background="@drawable/button2"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="15dp"
+        android:textColor="#5776ff"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        android:gravity="center"
         android:layout_weight="1"
-        android:text="주소 등록하기"
-        android:textSize="30dp"/>
+        android:text="주소 등록하기" />
 
     <Spinner
+        android:id="@+id/adrress_dialog_spinner"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:id="@+id/adrress_dialog_spinner"
-        android:spinnerMode="dropdown"
         android:background="@drawable/button2"
-        />
+        android:spinnerMode="dropdown" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="등록하기"
+            android:background="@drawable/button2"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="취소하기"
+            android:background="@drawable/button2"
+            />
+    </LinearLayout>
 
 
 </LinearLayout>
