@@ -60,7 +60,7 @@ public class JSONTask extends AsyncTask<String,String,String> {
 
                 //아래라인은 실제 reader에서 데이터를 가져오는 부분이다. 즉 node.js서버로부터 데이터를 가져온다.
 
-                while((line = reader.readLine()) != null){
+                while((line = reader.readLine()) != null) {
 
                     buffer.append(line);
 

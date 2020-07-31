@@ -81,6 +81,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
     private View mLayout;  // Snackbar 사용하기 위해서는 View가 필요
     // (Toast에서는 Context가 필요)
 
+    private Address currentAddress;
     private View view;
 
 
@@ -404,9 +405,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
                 Log.i(TAG, "위도:" + String.valueOf(location.getLatitude()) + " 경도:" + String.valueOf(location.getLongitude()));
 
-                String markerTitle = getCurrentAddress(currentPosition);
+                String markerTitle = "내 위치";
+                String markerSnippet = getCurrentAddress(currentPosition);
+                /*
                 String markerSnippet = "위도:" + String.valueOf(location.getLatitude())
                         + " 경도:" + String.valueOf(location.getLongitude());
+
+                 */
 
                 Log.d(TAG, "onLocationResult : " + markerSnippet);
 
@@ -480,8 +485,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
         }
 
         else {
-            Address address = addresses.get(0);   // address ex. 대한민국 서울특별시 광진구 군자동 339-1
-            return address.getAddressLine(0);
+            currentAddress = addresses.get(0);   // address ex. 대한민국 서울특별시 광진구 군자동 339-1
+            return currentAddress.getAddressLine(0);
         }
     }
 
