@@ -21,6 +21,7 @@
         android:textSize="30dp"
         android:textStyle="bold" />
 
+
     <LinearLayout
         android:id="@+id/fragmentGoogle"
         android:layout_width="match_parent"
@@ -32,12 +33,46 @@
         android:background="@drawable/button2"
         />
 
-    <TextView
+
+    <RadioGroup
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:textSize="40dp"
-        android:text="이윤환 왤캐 잘생김? 진짜 부러워.."
-        />
+        android:layout_height="165dp"
+        android:id="@+id/radioGroup"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/radioButton1"
+            android:button="@null"
+            android:layout_weight="1"
+            android:layout_width="123dp"
+            android:layout_height="165dp"
+            android:textSize="30sp"
+            android:gravity="center"
+            android:text="1km"/>
+
+           <!--android:checked="true" -->
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:button="@null"
+            android:layout_weight="1"
+            android:layout_width="125dp"
+            android:layout_height="165dp"
+            android:textSize="30sp"
+            android:gravity="center"
+            android:text="2km" />
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:button="@null"
+            android:layout_weight="1"
+            android:layout_width="117dp"
+            android:layout_height="165dp"
+            android:textSize="30sp"
+            android:gravity="center"
+            android:text="3km" />
+
+    </RadioGroup>
+
 
 </LinearLayout>

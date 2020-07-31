@@ -211,6 +211,7 @@ public class CoronaInformationFragment extends Fragment {
             }
         }
     }
+
     public class MyValueFormatter extends ValueFormatter implements IValueFormatter {
 
         private DecimalFormat mFormat;

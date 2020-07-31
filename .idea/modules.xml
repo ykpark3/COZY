@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/MyEyes.iml" filepath="$PROJECT_DIR$/.idea/modules/MyEyes.iml" group="MyEyes" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MyEyes-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MyEyes-app.iml" group="MyEyes/app" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="MyEyes/app" />
     </modules>
   </component>

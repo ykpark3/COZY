@@ -3,8 +3,10 @@ package com.example.myeyes;
 public final class Constant {
     public final static String MAIN_COLOR = "#5776ff";
     public final static String CORONA_INFORMATION_URL = "http://ec2-13-209-74-229.ap-northeast-2.compute.amazonaws.com:3000/coronaInfo";
+
     public final static String ADRRESS_DATABASE_TABLE_NAME = "userAdrress";
     public final static String REGISER_MY_ADRRESS = "내 주소 저장하기";
+
 
 
 
@@ -66,7 +68,6 @@ public final class Constant {
             "고성군", "남해군", "하동군" ,"산청군" ,"함양군", "거창군" ,"합천군"};
 
     public final static String[] adrressInJeJu = {"시/군/구","제주시","서귀포시"};
-
 
 
 }

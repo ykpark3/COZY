@@ -65,4 +65,5 @@ public class MovingLineFragment extends Fragment {
             }
         });
     }
+
 }

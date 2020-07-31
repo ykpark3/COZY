@@ -22,7 +22,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.myeyes.MainActivity;
 import com.example.myeyes.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -50,7 +49,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
     public MapView mapView;
 
-    public GoogleMap mMap;
+    public static GoogleMap mMap;
+
 
     private static final String TAG = "google map";
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
@@ -66,7 +66,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
     //private static final String TAG = "google map";
 
     Location mCurrentLocation;
-    LatLng currentPosition;
+
+    public static LatLng currentPosition;
 
     private Location location;
     public String[] finding = new String[2];   // 0: latitude, 1: longitude;
@@ -82,6 +83,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
     private View mLayout;  // Snackbar 사용하기 위해서는 View가 필요
     // (Toast에서는 Context가 필요)
 
+    private Address currentAddress;
+    private View view;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -101,7 +104,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_map, container,false);
+        view = inflater.inflate(R.layout.fragment_map, container,false);
+
         mapView = (MapView) view.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
@@ -117,10 +121,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
         builder.addLocationRequest(locationRequest);
 
         //mFusedLocationClient = LocationServices.getFusedLocationProviderClient(((MainActivity)MainActivity.context));
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-       // SupportMapFragment mapFragment = (SupportMapFragment) ((MainActivity)MainActivity.context).getSupportFragmentManager().findFragmentById(R.id.map);
-        SupportMapFragment mapFragment = (SupportMapFragment)(getActivity()).getSupportFragmentManager().findFragmentById(R.id.map);
+        // SupportMapFragment mapFragment = (SupportMapFragment) ((MainActivity)MainActivity.context).getSupportFragmentManager().findFragmentById(R.id.map);
         //mapFragment.getMapAsync(this);
+
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        SupportMapFragment mapFragment = (SupportMapFragment)(getActivity()).getSupportFragmentManager().findFragmentById(R.id.map);
+
 
         return view;
     }
@@ -136,12 +143,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
         // 런타임 퍼미션 처리
         // 1. 위치 퍼미션 가지고 있는지 체크
-        //int hasFineLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);   // fine location: gps, 네트워크 모두 사용 -> 더 정확
-        //int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);   // coarse location: Cell-ID, WIFI
+
+        //int hasFineLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        //int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
 
         int hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);   // fine location: gps, 네트워크 모두 사용 -> 더 정확
         int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION);   // coarse location: Cell-ID, WIFI
-
 
         if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED &&
                 hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
@@ -161,7 +168,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), REQUIRED_PERMISSIONS[0])) {   // shouldShowRequestPermissionRationale: 사용자가 이전에 권한 요청을 거부한 경우에 true 반환
 
                 // 3-2. 요청을 진행하기 전에 사용자가에게 퍼미션이 필요한 이유를 설명
-                Snackbar.make(mLayout, "이 앱을 실행하려면 위치 접근 권한이 필요합니다.",
+
+                Snackbar.make(mLayout, "이 앱을 실행하려면 위치 정보 이용 권한이 필요합니다.",
+
                         Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
 
                     @Override
@@ -178,7 +187,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
                 ActivityCompat.requestPermissions( getActivity(), REQUIRED_PERMISSIONS, PERMISSIONS_REQUEST_CODE);
             }
         }
-
 
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
@@ -225,7 +233,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
 
                     // 사용자가 거부만 선택한 경우에는 앱을 다시 실행하여 허용을 선택하면 앱을 사용할 수 있음
-                    Snackbar.make(mLayout, "퍼미션이 거부되었습니다. 앱을 다시 실행하여 퍼미션을 허용해주세요. ",
+
+                    Snackbar.make(mLayout, "위치 정보 이용이 거부되었습니다. 앱을 다시 실행하여 허용해주세요. ",
+
                             Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
 
                         @Override
@@ -236,8 +246,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
                 }
                 else {
-                    // "다시 묻지 않음"을 사용자가 체크하고, 거부를 선택한 경우에는 설정(앱 정보)에서 퍼미션을 허용해야 앱을 사용할 수 있음
-                    Snackbar.make(mLayout, "퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다. ",
+
+                    // "다시 묻지 않음"을 사용자가 체크하고, 거부를 선택한 경우에는 설정에서 허용해야 앱을 사용할 수 있음
+                    Snackbar.make(mLayout, "위치 정보 이용이 거부되었습니다. 설정에서 위치 정보 이용을 허용해야 합니다. ",
+
                             Snackbar.LENGTH_INDEFINITE).setAction("확인", new View.OnClickListener() {
 
                         @Override
@@ -255,7 +267,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
     // GPS 활성화 확인
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
 
         Log.d("!!!!!", "onActivityResult :");
         super.onActivityResult(requestCode, resultCode, data);
@@ -282,10 +293,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
 
     // 사용자가 GPS 활성 시켰는지 검사
-    public boolean checkLocationServicesStatus() {
 
+    private boolean checkLocationServicesStatus() {
 
         Log.d("!!!!!", "checkLocationServicesStatus :");
+
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         //LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -295,9 +307,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
 
     // GPS 활성화 관련 메세지 출력
-    public void showDialogForLocationServiceSetting() {
+    public void showLocationServiceMessage() {
 
-        Log.d("!!!!!", "showDialogForLocationServiceSetting :");
+        Log.d("!!!!!", "showLocationServiceMessage :");
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("위치 서비스 비활성화");
@@ -329,10 +341,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
         Log.d("!!!!!", "setDefaultLocation :");
         //디폴트 위치, Seoul
         LatLng DEFAULT_LOCATION = new LatLng(37.56, 126.97);
-        String markerTitle = "위치정보 가져올 수 없음";
-        String markerSnippet = "위치 퍼미션과 GPS 활성 여부를 확인하세요";
-
-        Log.d("!!!!!", String.valueOf(currentMarker));
+        String markerTitle = "위치 정보 가져올 수 없음";
+        String markerSnippet = "GPS 허용 여부를 확인하세요.";
 
         if (currentMarker != null) {
             currentMarker.remove();
@@ -349,21 +359,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, 15);
         mMap.moveCamera(cameraUpdate);
 
-
-
-        Log.d("!!!!!22", String.valueOf(currentMarker));
+        Log.d("!!!!!", String.valueOf(currentMarker));
     }
 
 
 
     // 위치 업데이트 시작
-    public void startLocationUpdates() {
+    private void startLocationUpdates() {
         Log.d("!!!!!", "startLocationUpdates :");
 
 
         if (!checkLocationServicesStatus()) {
-            Log.d(TAG, "startLocationUpdates : call showDialogForLocationServiceSetting");
-            showDialogForLocationServiceSetting();
+            // 위치 서비스 활성화 되어 있지 않은 경우 안내 메세지
+            showLocationServiceMessage();
         }
 
         else {
@@ -393,9 +401,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
         @Override
         public void onLocationResult(LocationResult locationResult) {
 
-
             Log.d("!!!!!", "onLocationResult :");
-
 
             super.onLocationResult(locationResult);
 
@@ -408,17 +414,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
                 Log.i(TAG, "위도:" + String.valueOf(location.getLatitude()) + " 경도:" + String.valueOf(location.getLongitude()));
 
-                String markerTitle = getCurrentAddress(currentPosition);
+                String markerTitle = "내 위치";
+                String markerSnippet = getCurrentAddress(currentPosition);
+                /*
                 String markerSnippet = "위도:" + String.valueOf(location.getLatitude())
                         + " 경도:" + String.valueOf(location.getLongitude());
+
+                 */
 
                 Log.d(TAG, "onLocationResult : " + markerSnippet);
 
                 // 현재 위치에 마커 생성하고 이동
-                setCurrentLocation(location, markerTitle, markerSnippet);
+                setCurrentLocationMarker(location, markerTitle, markerSnippet);
 
                 mCurrentLocation = location;
             }
+
             findLocation(locationResult);
 
             mFusedLocationClient.removeLocationUpdates(locationCallback);   // 루프 한 번만 돌게 하기
@@ -428,11 +439,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
 
     // 위도, 경도값 찾기
-    public String[] findLocation(LocationResult locationResult) {
+    private String[] findLocation(LocationResult locationResult) {
 
         Log.d("!!!!!", "findLocation :");
-
-
 
         List<Location> locationList = locationResult.getLocations();
 
@@ -452,7 +461,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
 
     // 지오코더를 이용해 현재 주소 찾기
-    public String getCurrentAddress(LatLng latlng) {
+    private String getCurrentAddress(LatLng latlng) {
         Log.d("!!!!!", "getCurrentAddress :");
 
         //지오코더: GPS를 주소로 변환
@@ -477,22 +486,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
 
         if (addresses == null || addresses.size() == 0) {
+            Log.d("!!!!!", "사이즈"+String.valueOf(addresses.size()));
+
             //Toast.makeText(this, "주소 미발견", Toast.LENGTH_LONG).show();
             return "주소 미발견";
 
         }
 
         else {
-            Address address = addresses.get(0);   // address ex. 대한민국 서울특별시 광진구 군자동 339-1
-            return address.getAddressLine(0).toString();
+            currentAddress = addresses.get(0);   // address ex. 대한민국 서울특별시 광진구 군자동 339-1
+            return currentAddress.getAddressLine(0);
         }
     }
 
 
     // 현재 위치에 마커 생성
-    public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
+    private void setCurrentLocationMarker(Location location, String markerTitle, String markerSnippet) {
 
-        Log.d("!!!!!", "setCurrentLocation :");
+        Log.d("!!!!!", "setCurrentLocationMarker :");
+
+        Log.d("!!!!!", markerTitle);
         if (currentMarker != null) {
             currentMarker.remove();
         }
@@ -506,12 +519,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
         markerOptions.draggable(true);
 
         currentMarker = mMap.addMarker(markerOptions);
-
+        //currentMarker.showInfoWindow();   // title 항상 보이게
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(currentLatLng);
         mMap.moveCamera(cameraUpdate);
     }
-
-
 
 
     // 런타임 퍼미션 처리
@@ -524,11 +535,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
         int hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
         int hasCoarseLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION);
 
-
         if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED && hasCoarseLocationPermission == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
 
         return false;
     }
+
+    private void setConfirmerLocationMarker() {
+
+
+    }
+
 }
