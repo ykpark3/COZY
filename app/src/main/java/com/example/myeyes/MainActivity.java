@@ -12,7 +12,9 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
@@ -45,13 +47,15 @@ public class MainActivity extends AppCompatActivity{
     private static final int REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE = 0;
     private boolean isPermissionGranted = false;
     private STTAPI speechAPI;
-
-    public MainActivity(){ }
+    private Database adrressDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //데이타 베이스
+        adrressDatabase = Database.getInstance(MainActivity.this);
 
         //권한을 확인하는 부분, 권한 중 하나라도 퍼미션 거부되어있는 경우우
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED

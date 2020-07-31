@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:textSize="20dp"
-    android:gravity="center"
+    android:gravity="left|center_vertical"
     >
 
 </TextView>

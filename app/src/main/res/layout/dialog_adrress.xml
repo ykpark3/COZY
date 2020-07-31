@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="350dp"
-    android:layout_height="300dp"
+    android:layout_height="250dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/adrress_dialog"
     android:orientation="vertical">
@@ -21,9 +21,10 @@
         android:id="@+id/adrress_dialog_spinner"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_marginLeft="10dp"
+        android:layout_weight="0.5"
+        android:overlapAnchor="false"
         android:spinnerMode="dropdown"
-        android:layout_margin="10dp"
         android:textSize="20dp"
         />
 
@@ -31,10 +32,11 @@
         android:id="@+id/adrress2_dialog_spinner"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_gravity="center"
-        android:layout_margin="10dp"
-        android:spinnerMode="dropdown" />
+        android:layout_weight="0.5"
+        android:layout_marginLeft="10dp"
+        android:overlapAnchor="false"
+        android:spinnerMode="dropdown"
+        android:textSize="20dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,6 +44,7 @@
         android:layout_weight="1">
 
         <Button
+            android:id="@+id/registerButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -50,6 +53,7 @@
             android:text="등록하기" />
 
         <Button
+            android:id="@+id/cancleButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
