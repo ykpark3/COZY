@@ -3,7 +3,7 @@ package com.example.myeyes;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.JobIntentService;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -30,6 +30,11 @@ import com.example.myeyes.fragment.CoronaInformationFragment;
 import com.example.myeyes.fragment.IntroFragment;
 import com.example.myeyes.fragment.MovingLineFragment;
 import com.example.myeyes.fragment.SetUpFragment;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+
 import com.kakao.sdk.newtoneapi.SpeechRecognizerClient;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerManager;
 import com.kakao.sdk.newtoneapi.TextToSpeechClient;
@@ -38,7 +43,8 @@ import com.kakao.sdk.newtoneapi.TextToSpeechManager;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
+
 
     private FragmentManager fragmentManager;
     private Context mContext;
@@ -47,12 +53,15 @@ public class MainActivity extends AppCompatActivity{
     private static final int REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE = 0;
     private boolean isPermissionGranted = false;
     private STTAPI speechAPI;
+
     private Database adrressDatabase;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         //데이타 베이스
         adrressDatabase = Database.getInstance(MainActivity.this);
@@ -78,16 +87,20 @@ public class MainActivity extends AppCompatActivity{
         //init 시 intro fragment를 삽입
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.fragment_container,new IntroFragment());
+        fragmentTransaction.add(R.id.fragment_container, new IntroFragment());
         fragmentTransaction.commit();
+
+
+        getHashKey(this);
+
     }
 
-    public void speakButtonText(Button button){
-        String buttonString = button.getText().toString().replace("\n"," ");
+    public void speakButtonText(Button button) {
+        String buttonString = button.getText().toString().replace("\n", " ");
         ttsClient.play(buttonString);
     }
 
-    public void coronaInformationButton (View view){
+    public void coronaInformationButton(View view) {
         //권한이 충족됐을때만 이벤트 실행
         if (!isPermissionGranted) {
             checkPermissionGranted();
@@ -100,11 +113,11 @@ public class MainActivity extends AppCompatActivity{
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
         fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.replace(R.id.fragment_container,new CoronaInformationFragment());
+        fragmentTransaction.replace(R.id.fragment_container, new CoronaInformationFragment());
         fragmentTransaction.commit();
     }
 
-    public void movingLineButton(View view){
+    public void movingLineButton(View view) {
         //권한이 충족됐을때만 이벤트 실행
         if (!isPermissionGranted) {
             checkPermissionGranted();
@@ -117,11 +130,11 @@ public class MainActivity extends AppCompatActivity{
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
         fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.replace(R.id.fragment_container,new MovingLineFragment());
+        fragmentTransaction.replace(R.id.fragment_container, new MovingLineFragment());
         fragmentTransaction.commit();
     }
 
-    public void comparisionMovingLineButton(View view){
+    public void comparisionMovingLineButton(View view) {
         //권한이 충족됐을때만 이벤트 실행
         if (!isPermissionGranted) {
             checkPermissionGranted();
@@ -134,26 +147,24 @@ public class MainActivity extends AppCompatActivity{
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
         fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.replace(R.id.fragment_container,new ComparisionMovingLineFragment());
+        fragmentTransaction.replace(R.id.fragment_container, new ComparisionMovingLineFragment());
         fragmentTransaction.commit();
     }
 
-    public void setUpButton(View view){
+    public void setUpButton(View view) {
         //권한이 충족됐을때만 이벤트 실행
         if (!isPermissionGranted) {
             checkPermissionGranted();
             return;
         }
-
         Button button = findViewById(R.id.button4);
         speakButtonText(button);
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
         fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.replace(R.id.fragment_container,new SetUpFragment());
+        fragmentTransaction.replace(R.id.fragment_container, new SetUpFragment());
         fragmentTransaction.commit();
-
     }
 
     public void mikeButton(View view) {
@@ -165,12 +176,21 @@ public class MainActivity extends AppCompatActivity{
         }
         speechAPI = new STTAPI();
 
+
         //ttsClient.play("듣고 있어요."); 띠링? 같은 소리가 들리면 좋겟다!
+
 
         Toast.makeText(this, "음성인식을 시작합니다.", Toast.LENGTH_SHORT).show();
         sttClient.setSpeechRecognizeListener(speechAPI);
-        sttClient.startRecording( false);
+        sttClient.startRecording(false);
 
+
+        //권한이 충족됐을때만 이벤트 실행
+        if (!isPermissionGranted) {
+            checkPermissionGranted();
+            return;
+        }
+        speechAPI = new STTAPI();
     }
 
     public void startUsingSpeechAPI() {
@@ -180,7 +200,6 @@ public class MainActivity extends AppCompatActivity{
         TextToSpeechManager.getInstance().initializeLibrary(getApplicationContext());
         //퍼미션 flag true
         isPermissionGranted = true;
-
         //stt 클라이언트 생성
         SpeechRecognizerClient.Builder builder = new SpeechRecognizerClient.Builder().setServiceType(serviceType);
         sttClient = builder.build();
@@ -213,7 +232,8 @@ public class MainActivity extends AppCompatActivity{
 
     //퍼미션 체크 후 콜백 메소드
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE:
 
@@ -260,3 +280,4 @@ public class MainActivity extends AppCompatActivity{
     }
 
 }
+

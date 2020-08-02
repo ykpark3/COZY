@@ -1,21 +1,33 @@
 package com.example.myeyes;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListPopupWindow;
 import android.widget.Spinner;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.example.myeyes.Inferface.AdrressDialogListener;
+import com.example.myeyes.fragment.ComparisionMovingLineFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
@@ -29,13 +41,21 @@ public class AdrressDialog {
     //public Spinner rootSpinner;
     public Spinner childSpinner,rootSpinner;
     public Button regsiterButton,cancleButton;
+    public Dialog dialog;
+    public AdrressDialogListener adrressDialogListener;
+    public EditText editText;
 
     public AdrressDialog(Context context) {
         this.context = context;
     }
 
+    //리스너 설정
+    public void setDialogListener(AdrressDialogListener adrressDialogListener){
+        this.adrressDialogListener = adrressDialogListener;
+    }
+
     public void makeAdrressDialog() {
-        final Dialog dialog = new Dialog(context);
+        dialog = new Dialog(context);
 
         //액티비티 타이틀바 섬기기
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -49,23 +69,29 @@ public class AdrressDialog {
 
         regsiterButton = (Button) dialog.findViewById(R.id.registerButton);
         cancleButton = (Button) dialog.findViewById(R.id.cancleButton);
+        editText = (EditText) dialog.findViewById(R.id.adrress_name);
 
+        //등록 버튼은 값이 전부 제대로 입력됐을때 enable true가 된다.
         regsiterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //DB로 데이터 보내고 종료
                 String adrress = rootSpinner.getSelectedItem().toString() + " " +childSpinner.getSelectedItem().toString();
-                Database.getInstance(context).insertAdrress(Database.getInstance(context).getWritableDatabase(),adrress);
+                String adrressName = editText.getText().toString();
+                Database.getInstance(context).insertAdrress(Database.getInstance(context).getWritableDatabase(),adrress,adrressName);
+
+                adrressDialogListener.onRegisterButtonClicked();
+
+                dialog.dismiss();
             }
         });
 
         cancleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String str = Database.getInstance(context).getAdrress(Database.getInstance(context).getReadableDatabase(),0);
-                Log.d("qwe",str);
+                dialog.dismiss();
             }
         });
-
 
 
         //스피너 설정
@@ -80,11 +106,52 @@ public class AdrressDialog {
         final ArrayAdapter initialChildArrayAdapter = new ArrayAdapter(context, R.layout.adrress_spinner_item, Constant.defaultAdrress);
         childSpinner.setAdapter(initialChildArrayAdapter);
 
-        //클릭이벤트
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                //주소를 옳게 설정 했을때만 주소 선택가능
+                if(!TextUtils.isEmpty(editText.getText()) &&!childSpinner.getSelectedItem().toString().equals("시/군/구") && !childSpinner.getSelectedItem().toString().equals("동/면/읍")){
+                    regsiterButton.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        //child 클릭이벤트
+        childSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                regsiterButton.setEnabled(false);
+
+                //주소를 옳게 설정 했을때만 주소 선택가능
+                if(!TextUtils.isEmpty(editText.getText()) &&!childSpinner.getSelectedItem().toString().equals("시/군/구") && !childSpinner.getSelectedItem().toString().equals("동/면/읍")){
+                    regsiterButton.setEnabled(true);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        //root 클릭이벤트
         rootSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+                regsiterButton.setEnabled(false);
 
                 //"시군구" 로 초기화
                 ArrayAdapter childArrayAdapter  = new ArrayAdapter(context, R.layout.adrress_spinner_item, Constant.defaultAdrress);

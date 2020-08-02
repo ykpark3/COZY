@@ -36,7 +36,7 @@ public class Database extends SQLiteOpenHelper {
 
     public void createTable(SQLiteDatabase database) {
 
-        String sqlString = "CREATE TABLE " + Constant.ADRRESS_DATABASE_TABLE_NAME + " (adrress TEXT)";
+        String sqlString = "CREATE TABLE " + Constant.ADRRESS_DATABASE_TABLE_NAME + " (adrress TEXT, adrressName TEXT)";
 
         try {
             database.execSQL(sqlString);
@@ -46,10 +46,11 @@ public class Database extends SQLiteOpenHelper {
 
     }
 
-    public void insertAdrress(SQLiteDatabase database, String userAdrress) {
+    public void insertAdrress(SQLiteDatabase database, String userAdrress, String userAdrressName) {
         database.beginTransaction();
         try {
-            String sqlString = "insert into " + Constant.ADRRESS_DATABASE_TABLE_NAME + "(adrress)" + " values('" + userAdrress + "')";
+            String sqlString = "insert into " + Constant.ADRRESS_DATABASE_TABLE_NAME + "(adrress, adrressName)" + " values('" + userAdrress + "', '" +
+                    userAdrressName + "')";
             database.execSQL(sqlString);
             database.setTransactionSuccessful();
             database.endTransaction();
@@ -58,24 +59,35 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public String getAdrress(SQLiteDatabase database,int index){
-        String sqlSelect = "SELECT * FROM "+ Constant.ADRRESS_DATABASE_TABLE_NAME;
-        Cursor cursor = null ;
+    //총 데이타 수를 get
+    public Integer getDataCount(SQLiteDatabase database){
+        String sqlSelect = "SELECT * FROM " + Constant.ADRRESS_DATABASE_TABLE_NAME;
+        Cursor cursor = null;
+        cursor = database.rawQuery(sqlSelect, null);
+
+        return cursor.getCount();
+    }
+
+    public String getAdrress(SQLiteDatabase database, int index) {
+        String sqlSelect = "SELECT * FROM " + Constant.ADRRESS_DATABASE_TABLE_NAME;
+        Cursor cursor = null;
         int count = 0;
 
-        cursor = database.rawQuery(sqlSelect,null);
+        cursor = database.rawQuery(sqlSelect, null);
 
         //만약 인덱스가 데이터베이스 안에있는 수보다 크다면, 내 주소 저장하기를 반환.
-        if(cursor.getCount()- 1 < index )
+        if (cursor.getCount() - 1 < index)
             return Constant.REGISER_MY_ADRRESS;
 
-        while(cursor.moveToNext()){
+        while (cursor.moveToNext()) {
 
-            String adrress = cursor.getString(0);
-            if(count == index)
+            String adrress = "  "+cursor.getString(1) + "\n" + "  "+ cursor.getString(0);
+            if (count == index)
                 return adrress;
             count++;
         }
         return null;
     }
+
+
 }
