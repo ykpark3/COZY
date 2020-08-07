@@ -5,16 +5,28 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.myeyes.fragment.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.kakao.sdk.newtoneapi.SpeechRecognizeListener;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerClient;
 import com.kakao.sdk.newtoneapi.TextToSpeechClient;
 import com.kakao.sdk.newtoneapi.TextToSpeechListener;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class STTAPI implements SpeechRecognizeListener{
     public TextToSpeechClient ttsClient;
     public String sstString;
+
+    //String[] chatBotMessage = new String[2];
+
+    String[] forwardToServer = new String[8];
+    // url, userinput, latitude, longitude
 
     public STTAPI(){
         //tts 클라이언트 생성
@@ -24,6 +36,26 @@ public class STTAPI implements SpeechRecognizeListener{
                 .setSpeechVoice(TextToSpeechClient.VOICE_WOMAN_READ_CALM)  //TTS 음색 모드 설정(여성 차분한 낭독체)
                 .setListener(new TTSAPI())
                 .build();
+
+
+
+        //chatBotMessage[0] = "https://danbee.ai/chatflow/welcome.do";
+        //connectChatBot();
+
+        forwardToServer[0] = "url";
+        forwardToServer[1] = "http://ec2-13-209-74-229.ap-northeast-2.compute.amazonaws.com:3000/danbee";
+        forwardToServer[2] = "userInput";
+        forwardToServer[3] = "오늘 코로나 확진자 수 알려줘";
+        //forwardToServer[3] = sstString;
+        forwardToServer[4] = "latitude";
+        forwardToServer[5] = "37.549";
+        //forwardToServer[5] = String.valueOf(MapFragment.currentPosition.latitude);
+        forwardToServer[6] = "longitude";
+        forwardToServer[7] = "127.07";
+       // forwardToServer[7] = String.valueOf(MapFragment.currentPosition.longitude);
+
+        connectServer();
+
     }
 
     @Override
@@ -53,11 +85,16 @@ public class STTAPI implements SpeechRecognizeListener{
     @Override
     public void onResults(Bundle results) {
 
+        Log.d("!!!!!", "onResults");
         final ArrayList<String> texts = results.getStringArrayList(SpeechRecognizerClient.KEY_RECOGNITION_RESULTS);
 
         sstString = texts.get(0);
         Log.d("MainActivity", "Result: " + texts);
         Log.d("MainActivity", "Result: " + sstString);
+
+       // connectServer();
+
+        Log.d("MainActivity", "Result!!!!!: " + sstString);
     }
 
     @Override
@@ -71,4 +108,130 @@ public class STTAPI implements SpeechRecognizeListener{
 
         ttsClient.play(sstString + "에 대해 검색합니다.");
     }
+
+
+
+
+    // POST 방식으로 서버랑 연결
+    private void connectServer() {
+
+        Log.d("!!!!!","connectPost");
+
+        Post post = new Post();
+        post.execute(forwardToServer);
+
+        // json으로 string 값 받아오기
+        String jsonString = "";
+
+        try {
+            Log.d("!!!!!","json"+jsonString);
+
+            jsonString= jsonString+post.get();
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        getServerInformation(jsonString);
+    }
+
+
+
+    // 서버에서 받은 정보
+    private void getServerInformation(String jsonString) {
+        String message;
+
+        try {
+            Log.d("!!!!","getServerInformation");
+
+            Log.d("!!!!!","jsonString: "+jsonString);
+
+            JSONObject jsonObject = new JSONObject(jsonString);
+
+            message = jsonObject.getString("message");
+
+            Log.d("!!!!!","message"+message);
+
+        } catch (JSONException e) {
+
+            Log.d("!!!!! here","JSONException");
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+     /*
+    // POST 방식으로 챗봇과 연결
+    private void connectChatBot() {
+
+        Log.d("!!!!!","connectChatBot");
+
+        ChatBot chatBot = new ChatBot();
+        chatBot.execute(chatBotMessage);
+
+        // json으로 string 값 받아오기
+        String jsonString ="";
+        try {
+            Log.d("!!!!!","json" + jsonString);
+
+            jsonString= jsonString + chatBot.get();
+
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        getChatBotResponseInformation(jsonString);
+    }
+
+
+
+    // 챗봇 response 정보
+    private void getChatBotResponseInformation(String jsonString) {
+        String message;
+
+        try {
+            Log.d("!!!!","getChatBotResponseInformation");
+
+            Log.d("!!!!!","jsonString: "+jsonString);
+
+            JSONObject jsonObject = new JSONObject(jsonString);
+
+            JSONObject responseSetJsonObject = jsonObject.getJSONObject("responseSet");
+            Log.d("!!!!!","responseSetJsonObject: "+responseSetJsonObject);
+
+            JSONObject resultJsonObject = responseSetJsonObject.getJSONObject("result");
+            Log.d("!!!!!","resultJsonObject: "+resultJsonObject);
+
+            JSONArray jsonArray = resultJsonObject.getJSONArray("result");
+            Log.d("!!!!!","jsonArray: "+jsonArray);
+
+            for(int index = 0; index < jsonArray.length(); index++) {
+
+                JSONObject resultObject = jsonArray.getJSONObject(index);
+                message = resultObject.getString("message");
+
+                serverMessage[1] = message;
+
+                Log.d("!!!!!","메세지: "+ message);
+            }
+
+            //connectServer();
+
+        } catch (JSONException e) {
+
+            Log.d("!!!!! here","JSONException");
+            e.printStackTrace();
+        }
+    }
+
+
+     */
+
+
 }

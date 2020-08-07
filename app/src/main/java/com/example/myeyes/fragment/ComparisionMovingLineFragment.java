@@ -1,8 +1,10 @@
 package com.example.myeyes.fragment;
 
 
-import android.app.Activity;
+import android.app.ProgressDialog;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -40,50 +42,45 @@ import java.util.concurrent.ExecutionException;
 
 public class ComparisionMovingLineFragment extends Fragment {
 
-    RadioButton radioButton1, radioButton2, radioButton3;
-    RadioGroup radioGroup;
+    private RadioButton radioButton1, radioButton2, radioButton3;
+    private RadioGroup radioGroup;
 
-    Circle circle;
+    private Circle circle;
 
-    String[] url = new String[4];
+    private String[] forwardToServer = new String[8];
 
-    Marker confirmerMarker = null;
-    LatLng confirmerLatLng;
-    Address confirmerAddress;
+
+    private Marker confirmerMarker = null;
+    private LatLng confirmerLatLng;
+    private Address confirmerAddress;
+
+
+    public static ProgressDialog progressDialog = null;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        Log.d("!!!!!", "onCreateView");
+
         View view = inflater.inflate(R.layout.fragment_comparision_moving_line, container, false);
+
+        // 로딩 화면
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("loading...");   // 메세지
+        progressDialog.setCancelable(true);   // 실행 도중 취소 가능 여부
+        progressDialog.getWindow().setLayout(30,10);   // 크기 조절
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+       // progressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Horizontal);
+        progressDialog.show();   // 실행
+
 
         radioButton1 = (RadioButton) view.findViewById(R.id.radioButton1);
         radioButton2 = (RadioButton) view.findViewById(R.id.radioButton2);
         radioButton3 = (RadioButton) view.findViewById(R.id.radioButton3);
+
         radioGroup = (RadioGroup) view.findViewById(R.id.radioGroup);
 
-        /*
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                Log.d("@@@", "그룹");
-
-                switch (checkedId) {
-                    case R.id.radioButton1:
-                        Log.d("@@@", "111");
-                        nearKilometer(1000);
-                        break;
-                    case R.id.radioButton2:
-                        Log.d("@@@", "222");
-                        nearKilometer(2000);
-                        break;
-                    case R.id.radioButton3:
-                        Log.d("@@@", "333");
-                        nearKilometer(3000);
-                        break;
-                }
-            }
-        });
-         */
 
 
         radioButton1.setOnClickListener(new View.OnClickListener() {
@@ -116,13 +113,17 @@ public class ComparisionMovingLineFragment extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+
         Log.d("!!!!!", "onActivityCreated");
+
         super.onActivityCreated(savedInstanceState);
 
+        forwardToServer[0] = "url";
+        forwardToServer[1] = "http://ec2-13-209-74-229.ap-northeast-2.compute.amazonaws.com:3000/search";
 
-        url[0] = "http://ec2-13-209-74-229.ap-northeast-2.compute.amazonaws.com:3000/search";
-
-        connectPost();
+        forwardToServer[2] = "kilometer";
+        forwardToServer[4] = "latitude";
+        forwardToServer[6] = "longitude";
 
         FragmentManager fm = getChildFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
@@ -130,6 +131,7 @@ public class ComparisionMovingLineFragment extends Fragment {
         fragmentTransaction.commit();
 
     }
+
 
 
     // 선택한 km에 따라 circle 추가
@@ -149,14 +151,15 @@ public class ComparisionMovingLineFragment extends Fragment {
 
         circle = MapFragment.mMap.addCircle(kilometer);
 
-        url[1] = String.valueOf(radius/1000);
-        url[2] = String.valueOf(MapFragment.currentPosition.latitude);
-        url[3] = String.valueOf(MapFragment.currentPosition.longitude);
+        forwardToServer[3] = String.valueOf(radius/1000);
+        forwardToServer[5] = String.valueOf(MapFragment.currentPosition.latitude);
+        forwardToServer[7] = String.valueOf(MapFragment.currentPosition.longitude);
 
-        for(int i=0; i<4; i++)
+        for(int i=0; i < forwardToServer.length; i++)
         {
-            Log.d("!!!!!", "i"+i+url[i]);
+            Log.d("!!!!!", "i" + i + forwardToServer[i]);
         }
+
         connectPost();
     }
 
@@ -167,10 +170,11 @@ public class ComparisionMovingLineFragment extends Fragment {
         Log.d("!!!!!","connectPost");
 
         Post post = new Post();
-        post.execute(url);
+        post.execute(forwardToServer);
 
         // json으로 string 값 받아오기
-        String jsonString ="";
+        String jsonString = "";
+
         try {
             Log.d("!!!!!","json"+jsonString);
 
@@ -188,7 +192,7 @@ public class ComparisionMovingLineFragment extends Fragment {
 
     // 서버에서 확진자 정보 받아오기
     private void getCoronaInformation(String jsonString) {
-        String visitDate, latitude, longitude;
+        String visitDate, latitude, longitude, buildingName;
 
         try {
             JSONObject jsonObject = new JSONObject(jsonString);
@@ -207,11 +211,12 @@ public class ComparisionMovingLineFragment extends Fragment {
                 visitDate = confirmerJSONObject.getString("visitDate");
                 latitude = confirmerJSONObject.getString("latitude");
                 longitude = confirmerJSONObject.getString("longitude");
+                buildingName = confirmerJSONObject.getString("buildingName");
 
                 confirmerLatLng = new LatLng(Double.valueOf(latitude), Double.valueOf(longitude));
 
                 String address = getConfirmerAddress(Double.valueOf(latitude), Double.valueOf(longitude));
-                drawMarker(visitDate, address);
+                drawMarker(visitDate, address, buildingName);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -257,7 +262,7 @@ public class ComparisionMovingLineFragment extends Fragment {
     }
 
     // 확진자 마커 그리기
-    private void drawMarker(String visitDate, String address) {
+    private void drawMarker(String visitDate, String address, String buildingName) {
 
         String markerTitle, markerSnippet;
 
@@ -271,12 +276,22 @@ public class ComparisionMovingLineFragment extends Fragment {
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(confirmerLatLng);
         markerOptions.title(markerTitle);
-        markerOptions.snippet(markerSnippet);
+        if(buildingName != null) {
+
+            markerOptions.snippet(markerSnippet + buildingName);
+        }
+        else {
+            markerOptions.snippet(markerSnippet);
+        }
         markerOptions.draggable(true);
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));   // 마커 색상 변경
+        //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));   // 마커 색상 변경
         markerOptions.alpha(0.5f);   // 투명도 지정하기
 
-        confirmerMarker = MapFragment.mMap.addMarker(markerOptions);
+        BitmapDrawable bitmapdraw = (BitmapDrawable)getResources().getDrawable(R.drawable.virus_marker);
+        Bitmap bitmap = bitmapdraw.getBitmap();
+        Bitmap virus = Bitmap.createScaledBitmap(bitmap, 70, 70, false);
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(virus));
 
+        confirmerMarker = MapFragment.mMap.addMarker(markerOptions);
     }
 }

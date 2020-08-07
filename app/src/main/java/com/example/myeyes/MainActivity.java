@@ -14,6 +14,7 @@ import android.content.pm.Signature;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v4.app.INotificationSideChannel;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
@@ -61,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        IntroActivity introActivity = (IntroActivity)IntroActivity.introActivity;
+        introActivity.finish();
+
 
         //데이타 베이스
         adrressDatabase = Database.getInstance(MainActivity.this);
@@ -97,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
     public void speakButtonText(Button button) {
         String buttonString = button.getText().toString().replace("\n", " ");
         ttsClient.play(buttonString);
+
+        Log.d("~~~~~", buttonString);
     }
 
     public void coronaInformationButton(View view) {

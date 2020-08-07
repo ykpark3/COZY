@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +18,12 @@ import androidx.fragment.app.Fragment;
 import com.example.myeyes.Constant;
 import com.example.myeyes.JSONTask;
 import com.example.myeyes.R;
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -34,10 +35,14 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import org.json.JSONArray;
@@ -57,10 +62,59 @@ public class CoronaInformationFragment extends Fragment {
     public String[] infecteeInformationDate;
     public float[] infceteeNumber;
 
+    PieChart pieChart;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_corona_information,container,false);
+
+
+        pieChart = (PieChart) view.findViewById(R.id.piechart);
+
+        pieChart.setUsePercentValues(true);
+        pieChart.getDescription().setEnabled(false);
+        pieChart.setExtraOffsets(5,5,5,5);   // 간격 띄우기
+
+        pieChart.setDragDecelerationFrictionCoef(0.2f);   // 드래그해서 돌아가게 하기
+
+        pieChart.setDrawHoleEnabled(true);   // 가운데 원형 가능 여부
+        pieChart.setHoleColor(Color.WHITE);
+        pieChart.setEntryLabelColor(Color.RED);   // 차트 항목별 제목 색깔
+
+        pieChart.getLegend().setEnabled(false);   // 범례 없애기
+
+        ArrayList city = new ArrayList();
+
+        city.add(new PieEntry(40f,"대구"));
+        city.add(new PieEntry(20f,"서울"));
+        city.add(new PieEntry(15f,"경북"));
+        city.add(new PieEntry(5f,"경기"));
+        city.add(new PieEntry(20f,"기타"));
+
+
+        //pieChart.animateY(1000, Easing.EasingOption.EaseInOutCubic); //애니메이션
+
+
+        PieDataSet dataSet = new PieDataSet(city,"Cities");   // 항목
+        dataSet.setSliceSpace(3f);   // 차트들 사이 간격
+        dataSet.setSelectionShift(3f);   // 클릭하면 커짐
+        dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+
+
+        dataSet.setValueTextColor(Color.BLACK);
+        dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);   // 항목 이름 밖으로
+        dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);   // 퍼센트 밖으로
+
+        dataSet.setValueLineColor(ColorTemplate.COLOR_NONE);   // 설명하는 선 없애기
+
+        PieData data = new PieData(dataSet);   // 퍼센트
+        data.setValueTextSize(10f);
+        data.setValueTextColor(Color.BLUE);
+
+        pieChart.setData(data);
+
         return view;
     }
 
@@ -86,64 +140,6 @@ public class CoronaInformationFragment extends Fragment {
         TextView liveDateTextView = (TextView)view.findViewById(R.id.liveDate);
         liveDateTextView.setText(liveDate);
 
-        //막대 그래프
-        BarChart barChart = (BarChart) view.findViewById(R.id.chart);//layout의 id;
-
-        //확대 불가능
-        barChart.setPinchZoom(true);
-        barChart.setScaleXEnabled(false);
-        barChart.setScaleYEnabled(false);
-        barChart.setDoubleTapToZoomEnabled(false);
-
-        barChart.animateY(2000);
-
-        ValueFormatter xAxisFormatter = new DayAxisValueFormatter(barChart);
-
-        XAxis xAxis = barChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setValueFormatter(xAxisFormatter);
-        xAxis.setGranularity(1f);
-
-        YAxis yAxisL = barChart.getAxisLeft();
-        YAxis yAxisR = barChart.getAxisRight();
-        yAxisL.setAxisMinimum(0f);
-        xAxis.setDrawGridLines(false);
-        xAxis.setDrawAxisLine(false);
-        xAxis.setDrawLabels(true);
-        yAxisL.setDrawAxisLine(false);
-        yAxisL.setDrawLabels(false);
-        yAxisL.setDrawZeroLine(true);
-        yAxisR.setDrawGridLines(false);
-        yAxisR.setDrawAxisLine(false);
-        yAxisR.setDrawLabels(false);
-
-        //remove horizontal lines
-        AxisBase axisBase = barChart.getAxisLeft();
-        axisBase.setDrawGridLines(false);
-
-        List<BarEntry> entry_chart = new ArrayList<>();
-        BarData barData = new BarData();
-
-        //여기서 일일 확진자수 3일전가지 int값으로 받아오기
-        entry_chart.add(new BarEntry(1, infceteeNumber[0]));
-        entry_chart.add(new BarEntry(2, infceteeNumber[1]));
-        entry_chart.add(new BarEntry(3, infceteeNumber[2]));
-        entry_chart.add(new BarEntry(4, infceteeNumber[3]));
-
-        BarDataSet barDataSet = new BarDataSet(entry_chart, "");
-        barDataSet.setColors(Color.parseColor(Constant.MAIN_COLOR));
-        barData.addDataSet(barDataSet);
-        barDataSet.setValueFormatter(new MyValueFormatter());
-        barChart.setData(barData);
-        barChart.setDescription(null);
-        //barChart.setFitBars(true);
-
-        Legend legend = barChart.getLegend();
-        legend.setEnabled(false);
-
-        barData.setValueTextSize(15);
-
-        barChart.invalidate();
 
         //텍스트뷰 글자 크기 가변적 적용
         TextView upTextView = (TextView)view.findViewById(R.id.upTextView);

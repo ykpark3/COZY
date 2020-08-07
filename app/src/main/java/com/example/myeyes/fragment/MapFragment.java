@@ -83,7 +83,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
     private View mLayout;  // Snackbar 사용하기 위해서는 View가 필요
     // (Toast에서는 Context가 필요)
 
-    private Address currentAddress;
+    private Address currentAddress, districtLatitudeLongitude;
     private View view;
 
     @Override
@@ -127,7 +127,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         SupportMapFragment mapFragment = (SupportMapFragment)(getActivity()).getSupportFragmentManager().findFragmentById(R.id.map);
-
 
         return view;
     }
@@ -339,7 +338,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
     public void setDefaultLocation() {
 
         Log.d("!!!!!", "setDefaultLocation :");
-        //디폴트 위치, Seoul
+        // 서울시청
         LatLng DEFAULT_LOCATION = new LatLng(37.56, 126.97);
         String markerTitle = "위치 정보 가져올 수 없음";
         String markerSnippet = "GPS 허용 여부를 확인하세요.";
@@ -416,23 +415,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
                 String markerTitle = "내 위치";
                 String markerSnippet = getCurrentAddress(currentPosition);
-                /*
-                String markerSnippet = "위도:" + String.valueOf(location.getLatitude())
-                        + " 경도:" + String.valueOf(location.getLongitude());
 
-                 */
 
                 Log.d(TAG, "onLocationResult : " + markerSnippet);
 
                 // 현재 위치에 마커 생성하고 이동
                 setCurrentLocationMarker(location, markerTitle, markerSnippet);
-
                 mCurrentLocation = location;
             }
 
             findLocation(locationResult);
-
             mFusedLocationClient.removeLocationUpdates(locationCallback);   // 루프 한 번만 돌게 하기
+
+            ComparisionMovingLineFragment.progressDialog.dismiss();   // 로딩창 없애기
+
         }
     };
 
@@ -459,19 +455,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
     }
 
 
-
-    // 지오코더를 이용해 현재 주소 찾기
+    // 리버스 지오코더를 이용해 현재 주소 찾기
     private String getCurrentAddress(LatLng latlng) {
-        Log.d("!!!!!", "getCurrentAddress :");
 
-        //지오코더: GPS를 주소로 변환
+        Log.d("!!!!!", "getCurrentAddress: ");
+
+        // 지오코더: GPS를 주소로 변환
         //Geocoder geocoder = new Geocoder(((MainActivity)MainActivity.context), Locale.getDefault());
         Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
         List<Address> addresses;
 
+        Log.d("!!!!!","geocoder" + geocoder);
+
         try {
             Log.d(TAG, "geocoder");
             addresses = geocoder.getFromLocation(latlng.latitude, latlng.longitude,1);
+            Log.d("!!!!!","address" + addresses);
+
 
         }
         catch (IOException ioException) {
@@ -483,7 +483,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
             //Toast.makeText(this, "잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
             return "잘못된 GPS 좌표";
         }
-
 
         if (addresses == null || addresses.size() == 0) {
             Log.d("!!!!!", "사이즈"+String.valueOf(addresses.size()));
@@ -540,11 +539,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
         }
 
         return false;
-    }
-
-    private void setConfirmerLocationMarker() {
-
-
     }
 
 }
