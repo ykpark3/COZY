@@ -43,7 +43,17 @@ public class Database extends SQLiteOpenHelper {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
 
+    public void deleteAdrress(SQLiteDatabase database, String deletedAdrress) {
+
+        deletedAdrress = deletedAdrress.replaceAll("\n","");
+        String sqlString = "delete from " + Constant.ADRRESS_DATABASE_TABLE_NAME + " WHERE adrressName = '" + deletedAdrress+ "'";
+
+        database.beginTransaction();
+        database.execSQL(sqlString);
+        database.setTransactionSuccessful();
+        database.endTransaction();
     }
 
     public void insertAdrress(SQLiteDatabase database, String userAdrress, String userAdrressName) {
@@ -60,7 +70,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     //총 데이타 수를 get
-    public Integer getDataCount(SQLiteDatabase database){
+    public Integer getDataCount(SQLiteDatabase database) {
         String sqlSelect = "SELECT * FROM " + Constant.ADRRESS_DATABASE_TABLE_NAME;
         Cursor cursor = null;
         cursor = database.rawQuery(sqlSelect, null);
@@ -81,7 +91,7 @@ public class Database extends SQLiteOpenHelper {
 
         while (cursor.moveToNext()) {
 
-            String adrress = "  "+cursor.getString(1) + "\n" + "  "+ cursor.getString(0);
+            String adrress = cursor.getString(1) + "\n" + cursor.getString(0);
             if (count == index)
                 return adrress;
             count++;

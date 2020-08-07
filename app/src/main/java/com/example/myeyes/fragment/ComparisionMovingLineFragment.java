@@ -61,31 +61,6 @@ public class ComparisionMovingLineFragment extends Fragment {
         radioButton3 = (RadioButton) view.findViewById(R.id.radioButton3);
         radioGroup = (RadioGroup) view.findViewById(R.id.radioGroup);
 
-        /*
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                Log.d("@@@", "그룹");
-
-                switch (checkedId) {
-                    case R.id.radioButton1:
-                        Log.d("@@@", "111");
-                        nearKilometer(1000);
-                        break;
-                    case R.id.radioButton2:
-                        Log.d("@@@", "222");
-                        nearKilometer(2000);
-                        break;
-                    case R.id.radioButton3:
-                        Log.d("@@@", "333");
-                        nearKilometer(3000);
-                        break;
-                }
-            }
-        });
-         */
-
-
         radioButton1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,7 +97,7 @@ public class ComparisionMovingLineFragment extends Fragment {
 
         url[0] = "http://ec2-13-209-74-229.ap-northeast-2.compute.amazonaws.com:3000/search";
 
-        connectPost();
+       // connectPost();
 
         FragmentManager fm = getChildFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
@@ -183,6 +158,7 @@ public class ComparisionMovingLineFragment extends Fragment {
         }
 
         getCoronaInformation(jsonString);
+        Log.d("qweeeeee",jsonString);
     }
 
 
@@ -191,6 +167,8 @@ public class ComparisionMovingLineFragment extends Fragment {
         String visitDate, latitude, longitude;
 
         try {
+            Log.d("json",jsonString);
+
             JSONObject jsonObject = new JSONObject(jsonString);
 
             JSONArray jsonArray = jsonObject.getJSONArray("infecteePaths");

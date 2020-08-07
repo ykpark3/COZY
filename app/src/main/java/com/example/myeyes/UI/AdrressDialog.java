@@ -1,4 +1,4 @@
-package com.example.myeyes;
+package com.example.myeyes.UI;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -26,7 +26,10 @@ import android.widget.Spinner;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.myeyes.Constant;
+import com.example.myeyes.Database;
 import com.example.myeyes.Inferface.AdrressDialogListener;
+import com.example.myeyes.R;
 import com.example.myeyes.fragment.ComparisionMovingLineFragment;
 import com.google.android.gms.maps.model.LatLng;
 

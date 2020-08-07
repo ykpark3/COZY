@@ -54,8 +54,6 @@ public class CoronaInformationFragment extends Fragment {
     private View view;
     public String jsonString = "";
     public String temporaryString,liveDate,overseasInflowNumber,nationalOccurenceNumber,totalInfecteeNumber,accumulationInfecteeNumber,casualtyNumber;
-    public String[] infecteeInformationDate;
-    public float[] infceteeNumber;
 
     @Nullable
     @Override
@@ -85,65 +83,6 @@ public class CoronaInformationFragment extends Fragment {
         //setText로 동적으로 text 준다.
         TextView liveDateTextView = (TextView)view.findViewById(R.id.liveDate);
         liveDateTextView.setText(liveDate);
-
-        //막대 그래프
-        BarChart barChart = (BarChart) view.findViewById(R.id.chart);//layout의 id;
-
-        //확대 불가능
-        barChart.setPinchZoom(true);
-        barChart.setScaleXEnabled(false);
-        barChart.setScaleYEnabled(false);
-        barChart.setDoubleTapToZoomEnabled(false);
-
-        barChart.animateY(2000);
-
-        ValueFormatter xAxisFormatter = new DayAxisValueFormatter(barChart);
-
-        XAxis xAxis = barChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setValueFormatter(xAxisFormatter);
-        xAxis.setGranularity(1f);
-
-        YAxis yAxisL = barChart.getAxisLeft();
-        YAxis yAxisR = barChart.getAxisRight();
-        yAxisL.setAxisMinimum(0f);
-        xAxis.setDrawGridLines(false);
-        xAxis.setDrawAxisLine(false);
-        xAxis.setDrawLabels(true);
-        yAxisL.setDrawAxisLine(false);
-        yAxisL.setDrawLabels(false);
-        yAxisL.setDrawZeroLine(true);
-        yAxisR.setDrawGridLines(false);
-        yAxisR.setDrawAxisLine(false);
-        yAxisR.setDrawLabels(false);
-
-        //remove horizontal lines
-        AxisBase axisBase = barChart.getAxisLeft();
-        axisBase.setDrawGridLines(false);
-
-        List<BarEntry> entry_chart = new ArrayList<>();
-        BarData barData = new BarData();
-
-        //여기서 일일 확진자수 3일전가지 int값으로 받아오기
-        entry_chart.add(new BarEntry(1, infceteeNumber[0]));
-        entry_chart.add(new BarEntry(2, infceteeNumber[1]));
-        entry_chart.add(new BarEntry(3, infceteeNumber[2]));
-        entry_chart.add(new BarEntry(4, infceteeNumber[3]));
-
-        BarDataSet barDataSet = new BarDataSet(entry_chart, "");
-        barDataSet.setColors(Color.parseColor(Constant.MAIN_COLOR));
-        barData.addDataSet(barDataSet);
-        barDataSet.setValueFormatter(new MyValueFormatter());
-        barChart.setData(barData);
-        barChart.setDescription(null);
-        //barChart.setFitBars(true);
-
-        Legend legend = barChart.getLegend();
-        legend.setEnabled(false);
-
-        barData.setValueTextSize(15);
-
-        barChart.invalidate();
 
         //텍스트뷰 글자 크기 가변적 적용
         TextView upTextView = (TextView)view.findViewById(R.id.upTextView);
@@ -184,49 +123,6 @@ public class CoronaInformationFragment extends Fragment {
         return 0;
     }
 
-
-    public class DayAxisValueFormatter extends ValueFormatter {
-        private final BarLineChartBase<?> chart;
-        public DayAxisValueFormatter(BarLineChartBase<?> chart) {
-            this.chart = chart;
-        }
-
-        @Override
-        public String getFormattedValue(float value) {
-            switch ((int) value){
-                case 1 :
-                    return infecteeInformationDate[0];
-
-                case 2:
-                    return infecteeInformationDate[1];
-
-                case 3:
-                    return infecteeInformationDate[2];
-
-                case 4:
-                    return infecteeInformationDate[3];
-
-                default:
-                    return "0";
-            }
-        }
-    }
-
-    public class MyValueFormatter extends ValueFormatter implements IValueFormatter {
-
-        private DecimalFormat mFormat;
-
-        public MyValueFormatter() {
-            mFormat = new DecimalFormat("###,###,###"); // use one decimal
-        }
-
-        @Override
-        public String getFormattedValue(float value) {
-            // write your logic here
-            return mFormat.format(value) + " 명"; // e.g. append a dollar-sign
-        }
-    }
-
     public void getCoronaInformation(String string) {
         try {
             JSONObject jsonObject = new JSONObject(string);
@@ -244,18 +140,6 @@ public class CoronaInformationFragment extends Fragment {
             accumulationInfecteeJSONObject = jsonArray.getJSONObject(3);
             accumulationInfecteeNumber = accumulationInfecteeNumber.substring(4);
             casualtyNumber = accumulationInfecteeJSONObject.getString("data");
-
-            infecteeInformationDate = new String[4];
-            infceteeNumber = new float[4];
-            JSONObject infecteeDateJSONObject;
-            JSONArray jsonChartArray = jsonObject.getJSONArray("recentInfectees");
-
-            for(int index = 0; index<4; index ++) {
-                infecteeDateJSONObject = jsonChartArray.getJSONObject(index);
-                infecteeInformationDate[index] = "" + infecteeDateJSONObject.getString("date");
-                infceteeNumber[index] = Float.parseFloat(infecteeDateJSONObject.getString("nationalOccurence")) +
-                        Float.parseFloat(infecteeDateJSONObject.getString("overseasInflow"));
-            }
 
         } catch (JSONException e) {
             e.printStackTrace();

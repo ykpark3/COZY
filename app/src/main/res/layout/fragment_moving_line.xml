@@ -20,50 +20,13 @@
         android:textSize="30dp"
         android:textStyle="bold" />
 
-    <ScrollView
+    <ListView
+        android:id="@+id/adrressButtonListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5"
-        android:orientation="vertical">
+        android:divider="#ffffff"
+        android:layout_marginBottom="5dp">
 
-        <LinearLayout
-            android:id="@+id/adrressButtonLinearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="5dp"
-            android:orientation="vertical">
-
-           <!--
-            <Button
-                android:id="@+id/firstButtonClickInMovingLine"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/button2"
-                android:gravity="center|center_vertical"
-                android:onClick="fistButtonClickInMovingLine"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:text="내 집(서울시 광진구)의 확진자 경로 보기"
-                android:textSize="30dp" />
-
-
-            <Button
-                android:id="@+id/secondButtonClickInMovingLine"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/button2"
-                android:gravity="center|center_vertical"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:text="내 주소 추가하기"
-                android:textSize="30dp" />-->
-
-        </LinearLayout>
-    </ScrollView>
+    </ListView>
 </LinearLayout>

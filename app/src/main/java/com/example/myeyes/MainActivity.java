@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -20,6 +21,7 @@ import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -40,8 +42,11 @@ import com.kakao.sdk.newtoneapi.SpeechRecognizerManager;
 import com.kakao.sdk.newtoneapi.TextToSpeechClient;
 import com.kakao.sdk.newtoneapi.TextToSpeechManager;
 
+import org.w3c.dom.Text;
+
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE = 0;
     private boolean isPermissionGranted = false;
     private STTAPI speechAPI;
+    private View view;
+    private LayoutInflater layoutInflater;
 
     private Database adrressDatabase;
 
@@ -61,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         //데이타 베이스
         adrressDatabase = Database.getInstance(MainActivity.this);
@@ -87,28 +93,26 @@ public class MainActivity extends AppCompatActivity {
         //init 시 intro fragment를 삽입
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.fragment_container, new IntroFragment());
+        fragmentTransaction.add(R.id.fragment_container, new IntroFragment(this));
         fragmentTransaction.commit();
 
-
-        getHashKey(this);
-
     }
 
-    public void speakButtonText(Button button) {
-        String buttonString = button.getText().toString().replace("\n", " ");
+    public void speakButtonText(TextView textView) {
+
+        String buttonString = textView.getText().toString().replace("\n", " ");
         ttsClient.play(buttonString);
+
     }
 
-    public void coronaInformationButton(View view) {
+    public void coronaInformationButton(TextView textView) {
         //권한이 충족됐을때만 이벤트 실행
         if (!isPermissionGranted) {
             checkPermissionGranted();
             return;
         }
 
-        Button button = findViewById(R.id.button1);
-        speakButtonText(button);
+        speakButtonText(textView);
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
@@ -124,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        Button button = findViewById(R.id.button2);
-        speakButtonText(button);
+        TextView textView = findViewById(R.id.button2);
+        speakButtonText(textView);
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
@@ -141,8 +145,8 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        Button button = findViewById(R.id.button3);
-        speakButtonText(button);
+        TextView textView = findViewById(R.id.button3);
+        speakButtonText(textView);
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
@@ -151,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    public void setUpButton(View view) {
+    /*public void setUpButton(View view) {
         //권한이 충족됐을때만 이벤트 실행
         if (!isPermissionGranted) {
             checkPermissionGranted();
@@ -165,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.replace(R.id.fragment_container, new SetUpFragment());
         fragmentTransaction.commit();
-    }
+    }*/
 
     public void mikeButton(View view) {
 
