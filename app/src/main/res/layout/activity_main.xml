@@ -4,16 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f9f9f9"
+    android:background="@color/mainBackgroundColor"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    android:id="@+id/main_layout"
+    tools:context=".Activity.MainActivity">
 
     <LinearLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="7.5"
-        android:background="#f9f9f9"
+        android:background="@color/mainBackgroundColor"
         android:orientation="vertical">
 
     </LinearLayout>

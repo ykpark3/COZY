@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#5886e9"
+        android:background="@color/newbackgroundcolor"
         android:padding="5dp">
 
         <TextView
             android:id="@+id/titleTextView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fontFamily="@font/nanumsquareeb"
+            android:fontFamily="@font/nanumsquareb"
             android:bufferType="spannable"
 
             android:gravity="center"
             android:text="COZY"
             android:textColor="#ffffff"
-            android:textSize="50dp" />
+            android:textSize="40dp" />
 
-        <ImageButton
+       <!-- <ImageButton
             android:id="@+id/settingButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
@@ -32,9 +33,9 @@
             android:layout_gravity="left|center_vertical"
             android:layout_marginLeft="10dp"
             android:adjustViewBounds="true"
-            android:background="#5886e9"
+            android:background="@color/newbackgroundcolor"
             android:scaleType="fitCenter"
-            android:src="@drawable/setting_image1" />
+            android:src="@drawable/setting_image1" />-->
 
         <ImageButton
             android:id="@+id/informationButton"
@@ -44,18 +45,32 @@
 
             android:layout_marginRight="10dp"
             android:adjustViewBounds="true"
-            android:background="#5886e9"
+            android:background="@color/newbackgroundcolor"
             android:scaleType="fitCenter"
-            android:src="@drawable/help1" />
+            android:src="@drawable/information1" />
     </FrameLayout>
 
-    <androidx.viewpager.widget.ViewPager
+    <com.example.cozy.UI.IntroViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3.5"
-        android:layout_marginBottom="30dp"
+        android:layout_weight="3.0"
+        />
 
+    <com.pm10.library.CircleIndicator
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.2"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="20dp"
+
+        app:p_gap="4dp"
+        app:p_radius="5dp"
+        app:p_strokeWidth="1dp"
+        app:p_defaultColor="@color/white"
+        app:p_selectedColor="@color/newbackgroundorangecolor"
+        app:p_strokeColor="@color/newbackgroundorangecolor"
         />
 
     <FrameLayout
@@ -73,10 +88,9 @@
             android:layout_marginRight="40dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-
+            android:elevation="3dp"
 
             android:clickable="true"
-            android:elevation="2dp"
             android:background="@drawable/intro_button"
             android:fontFamily="@font/nanumsquare_acr"
             android:gravity="center_vertical"
@@ -88,8 +102,8 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:elevation="3dp"
 
-            android:elevation="2dp"
             android:layout_gravity="left|center"
             android:layout_marginLeft="60dp"
             android:adjustViewBounds="true"
@@ -100,8 +114,8 @@
         <ImageView
             android:layout_width="15dp"
             android:layout_height="15dp"
+            android:elevation="3dp"
 
-            android:elevation="2dp"
             android:layout_gravity="right|center"
             android:layout_marginRight="60dp"
             android:adjustViewBounds="true"
@@ -125,7 +139,7 @@
             android:layout_marginRight="40dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:elevation="2dp"
+            android:elevation="3dp"
 
             android:clickable="true"
             android:background="@drawable/intro_button"
@@ -140,7 +154,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:elevation="2dp"
+            android:elevation="3dp"
 
             android:layout_gravity="left|center"
             android:layout_marginLeft="60dp"
@@ -152,7 +166,7 @@
         <ImageView
             android:layout_width="15dp"
             android:layout_height="15dp"
-            android:elevation="2dp"
+            android:elevation="3dp"
 
             android:layout_gravity="right|center"
             android:layout_marginRight="60dp"
@@ -166,8 +180,9 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="15dp"
-        android:layout_weight="1">
+        android:layout_marginBottom="5dp"
+        android:layout_weight="1"
+       >
 
         <TextView
             android:id="@+id/button3"
@@ -177,40 +192,40 @@
             android:layout_marginRight="40dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:elevation="2dp"
-
             android:clickable="true"
-            android:background="@drawable/intro_button"
+
+             android:background="@drawable/intro_button"
             android:fontFamily="@font/nanumsquare_acr"
             android:gravity="center_vertical"
             android:paddingLeft="75dp"
             android:text="동선 비교"
             android:textSize="25dp"
-            android:textColor="@color/newbackgroundcolor"/>
+            android:textColor="@color/newbackgroundcolor"
+            android:elevation="3dp"/>
 
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:elevation="2dp"
 
             android:layout_gravity="left|center"
             android:layout_marginLeft="60dp"
             android:adjustViewBounds="true"
             android:background="#ffffff"
             android:scaleType="fitCenter"
-            android:src="@drawable/main_33" />
+            android:src="@drawable/main_33"
+            android:elevation="3dp"/>
 
         <ImageView
             android:layout_width="15dp"
             android:layout_height="15dp"
-            android:elevation="2dp"
 
             android:layout_gravity="right|center"
             android:layout_marginRight="60dp"
             android:adjustViewBounds="true"
             android:background="#ffffff"
             android:scaleType="fitCenter"
-            android:src="@drawable/next1" />
+            android:src="@drawable/next1"
+            android:elevation="3dp"/>
 
     </FrameLayout>
 

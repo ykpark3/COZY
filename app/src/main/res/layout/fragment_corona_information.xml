@@ -79,17 +79,17 @@
 
             </TextView>
 
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/chart"
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/piechart"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_marginBottom="20dp"
                 android:layout_weight="4"
-                android:background="#ffffff"
+                android:background="#ffffff">
+            </com.github.mikephil.charting.charts.PieChart>
 
-                />
         </LinearLayout>
     </LinearLayout>
 

@@ -5,7 +5,7 @@ android {
     buildToolsVersion "30.0.1"
 
     defaultConfig {
-        applicationId "com.example.myeyes"
+        applicationId "com.example.cozy"
         minSdkVersion 14
         targetSdkVersion 30
         versionCode 1
@@ -20,6 +20,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+}
+
+repositories{
+    maven {url "https://jitpack.io"}
 }
 
 dependencies {
@@ -38,8 +42,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.google.android.material:material:1.3.0-alpha01'   // 스낵바 사용
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'   // 막대, 원 그래프 사용
     androidTestImplementation 'androidx.test:runner:1.2.0'
 
-    compile group: 'cz.msebera.android', name: 'httpclient', version: '4.4.1.2'
+    implementation group: 'cz.msebera.android', name: 'httpclient', version: '4.4.1.2'
+    implementation 'com.pm10:indicator:1.0.2'
 }
