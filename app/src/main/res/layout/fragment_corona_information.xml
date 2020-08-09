@@ -73,7 +73,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
 
-                android:text="일일 확진자 추세"
+                android:text="지역별 확진자 발생 비율"
                 android:textColor="#5776ff"
                 android:textSize="15dp">
 
