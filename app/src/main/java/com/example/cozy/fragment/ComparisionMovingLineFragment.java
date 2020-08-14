@@ -20,8 +20,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.cozy.Activity.MainActivity;
+import com.example.cozy.Constant;
 import com.example.cozy.Server.Post;
 import com.example.cozy.R;
+import com.example.cozy.UI.LoadingDialog;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
@@ -35,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -47,33 +51,27 @@ public class ComparisionMovingLineFragment extends Fragment {
     private Circle circle;
 
     private String[] forwardToServer = new String[8];
-
+    public List<String> markerList;
+    public int markerCount;
 
     private Marker confirmerMarker = null;
     private LatLng confirmerLatLng;
     private Address confirmerAddress;
+    private MainActivity mainActivity;
 
+    private LoadingDialog loadingDialog = new LoadingDialog();
 
-    public static ProgressDialog progressDialog = null;
-
+    public ComparisionMovingLineFragment(MainActivity mainActivity){
+        this.mainActivity = mainActivity;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        Log.d("!!!!!", "onCreateView");
-
         View view = inflater.inflate(R.layout.fragment_comparision_moving_line, container, false);
 
-        // 로딩 화면
-        progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("loading...");   // 메세지
-        progressDialog.setCancelable(true);   // 실행 도중 취소 가능 여부
-        progressDialog.getWindow().setLayout(30,10);   // 크기 조절
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-       // progressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Horizontal);
-        progressDialog.show();   // 실행
-
+        loadingDialog.setProgressDialog(getContext());
 
         radioButton1 = (RadioButton) view.findViewById(R.id.radioButton1);
         radioButton2 = (RadioButton) view.findViewById(R.id.radioButton2);
@@ -135,7 +133,13 @@ public class ComparisionMovingLineFragment extends Fragment {
 
     // 선택한 km에 따라 circle 추가
     private void drawCircle(int radius, int zoom) {
-        Log.d("!!!!!", "addCircle");
+
+        //확진자 동선 마커리스트와 총값 초기화
+        String wholeMarkerList = "";
+        markerCount = 0;
+
+        //마커를 저장할 리스트 생성
+        markerList = new ArrayList<>();
 
         MapFragment.mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
 
@@ -160,6 +164,14 @@ public class ComparisionMovingLineFragment extends Fragment {
         }
 
         connectPost();
+
+        for(Object object : markerList){
+            wholeMarkerList = wholeMarkerList + object.toString();
+
+        }
+
+        wholeMarkerList = wholeMarkerList + " 이상입니다.";
+        mainActivity.ttsClient.play(wholeMarkerList);
     }
 
 
@@ -169,7 +181,6 @@ public class ComparisionMovingLineFragment extends Fragment {
         Log.d("!!!!!","connectPost");
 
         Post post = new Post();
-
         post.execute(forwardToServer);
 
         // json으로 string 값 받아오기
@@ -271,7 +282,6 @@ public class ComparisionMovingLineFragment extends Fragment {
     // 확진자 마커 그리기
     private void drawMarker(String visitDate, String address, String buildingName) {
 
-
         String markerTitle, markerSnippet;
 
         markerTitle = visitDate;
@@ -287,21 +297,45 @@ public class ComparisionMovingLineFragment extends Fragment {
 
         if(buildingName != null) {
 
-            markerOptions.snippet(markerSnippet + buildingName);
+            markerOptions.snippet(markerSnippet + " " + buildingName);
+            markerList.add(getDateString(visitDate,markerCount) +" "+markerSnippet + ", " + buildingName+ "\n");
+
         }
         else {
             markerOptions.snippet(markerSnippet);
+            markerList.add(getDateString(visitDate,markerCount) +" "+markerSnippet + "\n");
         }
+
+        markerCount++;
+
         markerOptions.draggable(true);
         //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));   // 마커 색상 변경
         markerOptions.alpha(0.5f);   // 투명도 지정하기
 
-        BitmapDrawable bitmapdraw = (BitmapDrawable)getResources().getDrawable(R.drawable.virus_marker);
-        Bitmap bitmap = bitmapdraw.getBitmap();
+        BitmapDrawable bitmapdDraw = (BitmapDrawable)getResources().getDrawable(R.drawable.virus_marker);
+        Bitmap bitmap = bitmapdDraw.getBitmap();
         Bitmap virus = Bitmap.createScaledBitmap(bitmap, 70, 70, false);
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(virus));
 
         confirmerMarker = MapFragment.mMap.addMarker(markerOptions);
 
+    }
+
+    public String getDateString(String inputtedString,int markerCount){
+        int month,day;
+        String countString="";
+        inputtedString = inputtedString.replaceAll(" ","");
+
+        if(markerCount<11){
+            countString = Constant.NUMBER_KOKEAN_1[markerCount];
+        }
+        else{
+            countString = countString + Constant.NUMBER_KOKEAN_3[markerCount/10 - 1] + Constant.NUMBER_KOKEAN_2[markerCount % 10 - 1];
+        }
+
+        month = Integer.parseInt(inputtedString.substring(5,7));
+        day = Integer.parseInt(inputtedString.substring(8,10));
+
+        return countString + " 번째 확진자 동선 정보, " + month + "월 " + month  + "일,";
     }
 }

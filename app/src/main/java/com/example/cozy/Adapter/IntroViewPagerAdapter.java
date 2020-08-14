@@ -1,5 +1,6 @@
 package com.example.cozy.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.Spannable;
@@ -119,6 +120,7 @@ public class IntroViewPagerAdapter extends PagerAdapter {
         imageView.setImageResource(introImageViewDataArrayList.get(position).getImage());
     }
 
+    @SuppressLint("ResourceType")
     public void drawBarChart(){
 
         //막대 그래프
@@ -130,7 +132,7 @@ public class IntroViewPagerAdapter extends PagerAdapter {
         barChart.setScaleYEnabled(false);
         barChart.setDoubleTapToZoomEnabled(false);
 
-        barChart.animateY(2000);
+        //barChart.animateY(2000);
 
         ValueFormatter xAxisFormatter = new DayAxisValueFormatter(barChart);
 

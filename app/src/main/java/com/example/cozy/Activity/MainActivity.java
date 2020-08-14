@@ -1,6 +1,7 @@
 package com.example.cozy.Activity;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -14,6 +15,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.TransitionDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -77,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         //tts 클라이언트 생성
         ttsClient = new TextToSpeechClient.Builder()
-                .setSpeechMode(TextToSpeechClient.NEWTONE_TALK_2)     // 음성합성방식
+                .setSpeechMode(TextToSpeechClient.NEWTONE_TALK_1)     // 음성합성방식
                 .setSpeechSpeed(1.0)            // 발음 속도(0.5~4.0)
                 .setSpeechVoice(TextToSpeechClient.VOICE_WOMAN_READ_CALM)  //TTS 음색 모드 설정(여성 차분한 낭독체)
                 .setListener(new TTSAPI())
@@ -95,20 +99,25 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("ResourceType")
     public void changeBackgroundColor(){
         LinearLayout mainLayout = findViewById(R.id.main_layout);
-        mainLayout.setBackgroundColor(Color.parseColor(getString(R.color.newbackgroundcolor)));
 
-        LinearLayout fragmentLayout = findViewById(R.id.fragment_container);
-        fragmentLayout.setBackgroundColor(Color.parseColor(getString(R.color.newbackgroundcolor)));
+        ColorDrawable[] color = {new ColorDrawable(Color.parseColor(getString(R.color.mainBackgroundColor))),
+                new ColorDrawable(Color.parseColor(getString(R.color.newbackgroundcolor)))};
+
+        TransitionDrawable mainLayoutTransition = new TransitionDrawable(color);
+
+        if(Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+             mainLayout.setBackgroundDrawable(mainLayoutTransition);}
+        else{
+                mainLayout.setBackground(mainLayoutTransition);
+        }
+        mainLayoutTransition.startTransition(700);
     }
 
     @SuppressLint("ResourceType")
     public void changeOriginBackgroundColor(){
 
         LinearLayout mainLayout = findViewById(R.id.main_layout);
-        mainLayout.setBackgroundColor(Color.parseColor(getString(R.color.backgroundColor)));
-
-        LinearLayout fragmentLayout = findViewById(R.id.fragment_container);
-        fragmentLayout.setBackgroundColor(Color.parseColor(getString(R.color.backgroundColor)));
+        mainLayout.setBackgroundColor(Color.parseColor(getString(R.color.mainBackgroundColor)));
     }
 
 
@@ -125,9 +134,6 @@ public class MainActivity extends AppCompatActivity {
             checkPermissionGranted();
             return;
         }
-
-        changeBackgroundColor();
-
         speakButtonText(textView);
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -135,6 +141,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.replace(R.id.fragment_container, new CoronaInformationFragment());
         fragmentTransaction.commit();
+
+        changeBackgroundColor();
     }
 
     public void movingLineButton(View view) {
@@ -152,6 +160,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.replace(R.id.fragment_container, new MovingLineFragment());
         fragmentTransaction.commit();
+
+        changeBackgroundColor();
     }
 
     public void comparisionMovingLineButton(View view) {
@@ -167,13 +177,15 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
         fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.replace(R.id.fragment_container, new ComparisionMovingLineFragment());
+        fragmentTransaction.replace(R.id.fragment_container, new ComparisionMovingLineFragment(this));
         fragmentTransaction.commit();
+
+        changeBackgroundColor();
     }
 
 
     /*public void setUpButton(View view) {
->>>>>>> upstream/tts
+
         //권한이 충족됐을때만 이벤트 실행
         if (!isPermissionGranted) {
             checkPermissionGranted();
@@ -187,10 +199,12 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.replace(R.id.fragment_container, new SetUpFragment());
         fragmentTransaction.commit();
-<<<<<<< HEAD
-    }
-=======
+
     }*/
+
+    public void gotToBackStage(View view){
+        onBackPressed();
+    }
 
     public void mikeButton(View view) {
 

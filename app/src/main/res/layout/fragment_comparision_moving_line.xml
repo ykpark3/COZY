@@ -1,26 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/button2"
     android:layout_marginLeft="20dp"
+    android:layout_marginTop="20dp"
     android:layout_marginRight="20dp"
     android:layout_marginBottom="20dp"
-    android:layout_marginTop="20dp">
+    android:background="@drawable/button2"
+    android:orientation="vertical">
 
-    <TextView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.2"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="동선 비교"
-        android:textColor="#5776ff"
-        android:textSize="30dp"
-        android:textStyle="bold" />
+        android:layout_weight="1.2">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="동선 비교"
+            android:textColor="#5776ff"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/transparent"
+            android:onClick="gotToBackStage"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back1" />
+
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/fragmentGoogle"
@@ -29,59 +43,58 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_weight="5.5"
-        android:orientation="vertical"
         android:background="@drawable/button2"
-        />
+        android:orientation="vertical" />
 
 
     <RadioGroup
+        android:id="@+id/radioGroup"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:id="@+id/radioGroup"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="10dp"
-        android:layout_weight="2">
+        android:layout_marginBottom="10dp"
+        android:layout_weight="2"
+        android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/radioButton1"
-            android:background="@drawable/checkbox_background"
-            android:button="@null"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textSize="30sp"
+            android:background="@drawable/checkbox_background"
+            android:button="@null"
             android:gravity="center"
             android:text="1km"
-            android:textColor="@color/selector_text"/>
+            android:textColor="@color/selector_text"
+            android:textSize="30sp" />
 
-           <!--android:checked="true" -->
+        <!--android:checked="true" -->
 
         <RadioButton
             android:id="@+id/radioButton2"
-            android:background="@drawable/checkbox_background2"
-            android:button="@null"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textSize="30sp"
+            android:background="@drawable/checkbox_background2"
+            android:button="@null"
             android:gravity="center"
             android:text="2km"
-            android:textColor="@color/selector_text"/>
+            android:textColor="@color/selector_text"
+            android:textSize="30sp" />
 
         <RadioButton
             android:id="@+id/radioButton3"
-            android:background="@drawable/checkbox_background3"
-            android:button="@null"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textSize="30sp"
+            android:background="@drawable/checkbox_background3"
+            android:button="@null"
             android:gravity="center"
             android:text="3km"
-            android:textColor="@color/selector_text"/>
+            android:textColor="@color/selector_text"
+            android:textSize="30sp" />
 
 
     </RadioGroup>

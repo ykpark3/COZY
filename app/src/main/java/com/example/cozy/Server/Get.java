@@ -12,7 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class JSONTask extends AsyncTask<String,String,String> {
+public class Get extends AsyncTask<String,String,String> {
 
 
     @Override
@@ -24,8 +24,6 @@ public class JSONTask extends AsyncTask<String,String,String> {
             JSONObject jsonObject = new JSONObject();
 
             jsonObject.accumulate("user_id", "androidTest");
-
-            jsonObject.accumulate("name", "yun");
 
             HttpURLConnection con = null;
 

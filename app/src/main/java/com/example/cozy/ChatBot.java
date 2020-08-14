@@ -32,7 +32,6 @@ public class ChatBot extends AsyncTask<String, String, String> {
             jsonObject.accumulate("input_sentence", "오늘 확진자 수 알려줘");   // 사용자 대화 문장
             jsonObject.accumulate("chatbot_id", "f646de27-3776-4d09-9a3d-257bb5b86b2b");
 
-
             HttpURLConnection con = null;
             BufferedReader reader = null;
 

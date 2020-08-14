@@ -53,7 +53,8 @@ public class MovingLineAdapter extends BaseAdapter {
         view = layoutInflater.inflate(R.layout.moving_line_list_item, null);
         textView = (TextView) view.findViewById(R.id.movingLineListItem);
         if(!isEmpty)
-            textView.setText(movingLineAdrressList.get(position).getVisitDate() + "\n" + movingLineAdrressList.get(position).getAdrress());
+            textView.setText(movingLineAdrressList.get(position).getVisitDate() + "\n" + movingLineAdrressList.get(position).getAdrress()
+                    + " " + movingLineAdrressList.get(position).getBuildingName());
         else {
             imageView = view.findViewById(R.id.pinImage);
             imageView.setImageDrawable(null);

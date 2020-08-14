@@ -20,7 +20,7 @@ public class IntroThread extends Thread {
         Message message = new Message();
 
         try {
-            Thread.sleep(500);
+            Thread.sleep(1000);   // 1초
             message.what = 1;
             handler.sendEmptyMessage(message.what);
         } catch (Exception e) {

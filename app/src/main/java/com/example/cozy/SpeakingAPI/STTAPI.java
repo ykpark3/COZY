@@ -18,12 +18,10 @@ public class STTAPI implements SpeechRecognizeListener{
     public TextToSpeechClient ttsClient;
     public String sstString;
 
-    //String[] chatBotMessage = new String[2];
-
     String[] forwardToServer = new String[8];
-    // url, userinput, latitude, longitude
 
     public STTAPI(){
+
         //tts 클라이언트 생성
         ttsClient = new TextToSpeechClient.Builder()
                 .setSpeechMode(TextToSpeechClient.NEWTONE_TALK_2)     // 음성합성방식
@@ -155,78 +153,5 @@ public class STTAPI implements SpeechRecognizeListener{
             e.printStackTrace();
         }
     }
-
-
-
-
-     /*
-    // POST 방식으로 챗봇과 연결
-    private void connectChatBot() {
-
-        Log.d("!!!!!","connectChatBot");
-
-        ChatBot chatBot = new ChatBot();
-        chatBot.execute(chatBotMessage);
-
-        // json으로 string 값 받아오기
-        String jsonString ="";
-        try {
-            Log.d("!!!!!","json" + jsonString);
-
-            jsonString= jsonString + chatBot.get();
-
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        getChatBotResponseInformation(jsonString);
-    }
-
-
-
-    // 챗봇 response 정보
-    private void getChatBotResponseInformation(String jsonString) {
-        String message;
-
-        try {
-            Log.d("!!!!","getChatBotResponseInformation");
-
-            Log.d("!!!!!","jsonString: "+jsonString);
-
-            JSONObject jsonObject = new JSONObject(jsonString);
-
-            JSONObject responseSetJsonObject = jsonObject.getJSONObject("responseSet");
-            Log.d("!!!!!","responseSetJsonObject: "+responseSetJsonObject);
-
-            JSONObject resultJsonObject = responseSetJsonObject.getJSONObject("result");
-            Log.d("!!!!!","resultJsonObject: "+resultJsonObject);
-
-            JSONArray jsonArray = resultJsonObject.getJSONArray("result");
-            Log.d("!!!!!","jsonArray: "+jsonArray);
-
-            for(int index = 0; index < jsonArray.length(); index++) {
-
-                JSONObject resultObject = jsonArray.getJSONObject(index);
-                message = resultObject.getString("message");
-
-                serverMessage[1] = message;
-
-                Log.d("!!!!!","메세지: "+ message);
-            }
-
-            //connectServer();
-
-        } catch (JSONException e) {
-
-            Log.d("!!!!! here","JSONException");
-            e.printStackTrace();
-        }
-    }
-
-
-     */
-
 
 }

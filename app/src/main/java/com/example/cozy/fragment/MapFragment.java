@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.cozy.R;
+import com.example.cozy.UI.LoadingDialog;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -429,8 +430,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
             findLocation(locationResult);
             mFusedLocationClient.removeLocationUpdates(locationCallback);   // 루프 한 번만 돌게 하기
 
-            ComparisionMovingLineFragment.progressDialog.dismiss();   // 로딩창 없애기
-
+            LoadingDialog.loadingDialog.dismiss();   // 로딩창 없애기
         }
     };
 
@@ -475,7 +475,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
             addresses = geocoder.getFromLocation(latlng.latitude, latlng.longitude,1);
             Log.d("!!!!!","address" + addresses);
 
-
         }
         catch (IOException ioException) {
             //네트워크 문제
@@ -513,6 +512,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
         }
 
         LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+        // 사용자 주소에서 대한민국 지우기 -> 시도부터 보이게
+        markerSnippet = markerSnippet.substring(markerSnippet.indexOf(" ")+1);
 
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(currentLatLng);

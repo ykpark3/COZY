@@ -37,20 +37,26 @@ public class Post extends AsyncTask<String, String, String> {
                 Log.d("!!!!!@@", urls[i]);
             }
 
-            index = 2;
 
-            Log.d("!!!!!length",String.valueOf(urls.length));
+            // 코로나 지역별 정보 가져올 때는 보내는 값 없어서 length=2
+            if(urls.length > 2) {
+
+                index = 2;
+
+                Log.d("!!!!!length",String.valueOf(urls.length));
 
 
-            while(index < urls.length) {
+                while(index < urls.length) {
 
-                Log.d("!!!!!", urls[index]);
-                Log.d("!!!!!", urls[index+1]);
+                    Log.d("!!!!!", urls[index]);
+                    Log.d("!!!!!", urls[index+1]);
 
-                jsonObject.accumulate(urls[index], urls[index+1]);
+                    jsonObject.accumulate(urls[index], urls[index+1]);
 
-                index = index +2;
+                    index = index +2;
+                }
             }
+
 
             HttpURLConnection con = null;
 
