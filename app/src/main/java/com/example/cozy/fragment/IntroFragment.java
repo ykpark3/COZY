@@ -1,5 +1,7 @@
 package com.example.cozy.fragment;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Spannable;
@@ -9,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -76,7 +79,7 @@ public class IntroFragment extends Fragment {
         initializeImageViewData();
 
         viewPager = (IntroViewPager) view.findViewById(R.id.viewPager);
-        introViewPagerAdapter = new IntroViewPagerAdapter(getActivity(), introImageViewDataArrayList,infecteeInformationDate,infecteeNumber);
+        introViewPagerAdapter = new IntroViewPagerAdapter(getActivity(), introImageViewDataArrayList, infecteeInformationDate, infecteeNumber);
         viewPager.setAdapter(introViewPagerAdapter);
         viewPager.setScrollDurationFactor(2);
 
@@ -136,14 +139,13 @@ public class IntroFragment extends Fragment {
 
         introImageViewDataArrayList = new ArrayList<IntroImageViewData>();
 
-        Log.d("ger","gg");
 
         getCoronaInformation();
 
         DecimalFormat numberFormat = new DecimalFormat("###,###,###");
 
-        introImageViewDataArrayList.add(new IntroImageViewData("일일 확진자\n"+numberFormat.format(infecteeNumber[3])+"명"+"\n"+
-                infecteeInformationDate[3]+" 기준", R.drawable.slide_image1));
+        introImageViewDataArrayList.add(new IntroImageViewData("일일 확진자\n" + numberFormat.format(infecteeNumber[3]) + "명" + "\n" +
+                infecteeInformationDate[3] + " 기준", R.drawable.slide_image1));
         introImageViewDataArrayList.add(new IntroImageViewData("오늘확진자 현황", R.drawable.slide_image2));
         introImageViewDataArrayList.add(new IntroImageViewData("대한민국엔 \n위기극복의 DNA가 있습니다.", R.drawable.slide_image3));
 
@@ -171,7 +173,7 @@ public class IntroFragment extends Fragment {
             JSONObject infecteeDateJSONObject;
             JSONArray jsonChartArray = jsonObject.getJSONArray("recentInfectees");
 
-            for(int index = 0; index<4; index ++) {
+            for (int index = 0; index < 4; index++) {
                 infecteeDateJSONObject = jsonChartArray.getJSONObject(index);
                 infecteeInformationDate[index] = "" + infecteeDateJSONObject.getString("date");
                 infecteeNumber[index] = Float.parseFloat(infecteeDateJSONObject.getString("nationalOccurence")) +

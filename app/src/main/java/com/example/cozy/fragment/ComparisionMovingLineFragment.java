@@ -1,5 +1,6 @@
 package com.example.cozy.fragment;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -65,7 +66,6 @@ public class ComparisionMovingLineFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_comparision_moving_line, container, false);
 
         loadingDialog.setProgressDialog(getContext());
-
 
         radioButton1 = (RadioButton) view.findViewById(R.id.radioButton1);
         radioButton2 = (RadioButton) view.findViewById(R.id.radioButton2);
@@ -277,7 +277,7 @@ public class ComparisionMovingLineFragment extends Fragment {
 
         if(buildingName != null) {
 
-            markerOptions.snippet(markerSnippet + buildingName);
+            markerOptions.snippet(markerSnippet + " " + buildingName);
         }
         else {
             markerOptions.snippet(markerSnippet);

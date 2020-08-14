@@ -8,15 +8,18 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +30,7 @@ import com.example.cozy.SpeakingAPI.TTSAPI;
 import com.example.cozy.fragment.ComparisionMovingLineFragment;
 import com.example.cozy.fragment.CoronaInformationFragment;
 import com.example.cozy.fragment.IntroFragment;
+import com.example.cozy.fragment.MapFragment;
 import com.example.cozy.fragment.MovingLineFragment;
 
 import com.kakao.sdk.newtoneapi.SpeechRecognizerClient;
@@ -48,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
     private View view;
     private LayoutInflater layoutInflater;
-
-
     private Database adrressDatabase;
 
 
@@ -60,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
 
         IntroActivity introActivity = (IntroActivity)IntroActivity.introActivity;
         introActivity.finish();
-
 
         //데이타 베이스
         adrressDatabase = Database.getInstance(MainActivity.this);
@@ -86,11 +87,36 @@ public class MainActivity extends AppCompatActivity {
         //init 시 intro fragment를 삽입
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
         fragmentTransaction.add(R.id.fragment_container, new IntroFragment(this));
         fragmentTransaction.commit();
 
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction2 = fm.beginTransaction();
+        fragmentTransaction2.add(R.id.current, new MapFragment());
+        fragmentTransaction2.commit();
+
     }
+
+    @SuppressLint("ResourceType")
+    public void changeBackgroundColor(){
+        LinearLayout mainLayout = findViewById(R.id.main_layout);
+        mainLayout.setBackgroundColor(Color.parseColor(getString(R.color.newbackgroundcolor)));
+
+        LinearLayout fragmentLayout = findViewById(R.id.fragment_container);
+        fragmentLayout.setBackgroundColor(Color.parseColor(getString(R.color.newbackgroundcolor)));
+    }
+
+    @SuppressLint("ResourceType")
+    public void changeOriginBackgroundColor(){
+
+        LinearLayout mainLayout = findViewById(R.id.main_layout);
+        mainLayout.setBackgroundColor(Color.parseColor(getString(R.color.backgroundColor)));
+
+        LinearLayout fragmentLayout = findViewById(R.id.fragment_container);
+        fragmentLayout.setBackgroundColor(Color.parseColor(getString(R.color.backgroundColor)));
+    }
+
 
     public void speakButtonText(TextView textView) {
 
@@ -105,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
             checkPermissionGranted();
             return;
         }
+
+        changeBackgroundColor();
 
         speakButtonText(textView);
 
@@ -151,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     /*public void setUpButton(View view) {
->>>>>>> upstream/tts
+
         //권한이 충족됐을때만 이벤트 실행
         if (!isPermissionGranted) {
             checkPermissionGranted();
@@ -165,9 +193,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.replace(R.id.fragment_container, new SetUpFragment());
         fragmentTransaction.commit();
-<<<<<<< HEAD
-    }
-=======
+
     }*/
 
     public void mikeButton(View view) {
@@ -179,9 +205,10 @@ public class MainActivity extends AppCompatActivity {
         }
         speechAPI = new STTAPI();
 
-
         //ttsClient.play("듣고 있어요."); 띠링? 같은 소리가 들리면 좋겟다!
 
+
+        Log.d("!!!!!~~", String.valueOf(MapFragment.currentPosition));
 
         Toast.makeText(this, "음성인식을 시작합니다.", Toast.LENGTH_SHORT).show();
         sttClient.setSpeechRecognizeListener(speechAPI);
