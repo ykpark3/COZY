@@ -20,15 +20,16 @@
             android:gravity="center_horizontal|top"
             android:padding="13dp"
             android:text="확진자 동선"
-            android:textColor="#5776ff"
+            android:textColor="@color/newbackgroundcolor"
             android:textSize="30dp"
             android:textStyle="bold" />
 
         <ImageButton
-            android:layout_width="17dp"
-            android:layout_height="17dp"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
+
             android:background="@color/transparent"
             android:onClick="gotToBackStage"
             android:scaleType="fitCenter"

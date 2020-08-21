@@ -1,8 +1,15 @@
 package com.example.cozy.SpeakingAPI;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageButton;
 
+import androidx.annotation.RequiresApi;
+
+import com.airbnb.lottie.LottieAnimationView;
+import com.example.cozy.Activity.MainActivity;
+import com.example.cozy.R;
 import com.example.cozy.Server.Post;
 import com.kakao.sdk.newtoneapi.SpeechRecognizeListener;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerClient;
@@ -17,20 +24,21 @@ import java.util.concurrent.ExecutionException;
 public class STTAPI implements SpeechRecognizeListener{
     public TextToSpeechClient ttsClient;
     public String sstString;
+    private MainActivity mainActivity;
 
     String[] forwardToServer = new String[8];
 
-    public STTAPI(){
+    public STTAPI( MainActivity mainActivity){
+
+        this.mainActivity = mainActivity;
 
         //tts 클라이언트 생성
         ttsClient = new TextToSpeechClient.Builder()
                 .setSpeechMode(TextToSpeechClient.NEWTONE_TALK_2)     // 음성합성방식
                 .setSpeechSpeed(1.0)            // 발음 속도(0.5~4.0)
                 .setSpeechVoice(TextToSpeechClient.VOICE_WOMAN_READ_CALM)  //TTS 음색 모드 설정(여성 차분한 낭독체)
-                .setListener(new TTSAPI())
+                .setListener(new TTSAPI(mainActivity))
                 .build();
-
-
 
         //chatBotMessage[0] = "https://danbee.ai/chatflow/welcome.do";
         //connectChatBot();
@@ -69,6 +77,17 @@ public class STTAPI implements SpeechRecognizeListener{
     @Override
     public void onError(int errorCode, String errorMsg) {
         Log.d("MainActivity", "STT API ERROR.");
+
+        mainActivity.runOnUiThread(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void run() {
+                mainActivity.mainMikeButton.setImageResource(R.drawable.main_mike1);
+                mainActivity.mainMikeButton.setBackground(mainActivity.getDrawable(R.drawable.mike_button));
+                mainActivity.mikeLottieAnimation.setVisibility(LottieAnimationView.INVISIBLE);
+                mainActivity.mikeLottieAnimation.pauseAnimation();
+            }
+        });
     }
 
     @Override
@@ -98,6 +117,17 @@ public class STTAPI implements SpeechRecognizeListener{
     @Override
     public void onFinished() {
         Log.d("MainActivity", "STT API FINISHED.");
+
+        mainActivity.runOnUiThread(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void run() {
+                mainActivity.mainMikeButton.setImageResource(R.drawable.main_mike1);
+                mainActivity.mainMikeButton.setBackground(mainActivity.getDrawable(R.drawable.mike_button));
+                mainActivity.mikeLottieAnimation.setVisibility(LottieAnimationView.INVISIBLE);
+                mainActivity.mikeLottieAnimation.pauseAnimation();
+            }
+        });
 
         ttsClient.play(sstString + "에 대해 검색합니다.");
     }

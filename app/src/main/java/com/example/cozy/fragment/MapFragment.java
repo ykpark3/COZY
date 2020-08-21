@@ -22,6 +22,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.cozy.Activity.MainActivity;
 import com.example.cozy.R;
 import com.example.cozy.UI.LoadingDialog;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -88,8 +89,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
     private View view;
 
+
     @Override
     public void onAttach(@NonNull Context context) {
+        Log.d("!!!!!", "onAttach");
         super.onAttach(context);
         this.context = context;
     }
@@ -105,6 +108,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("!!!!!", "onCreateView");
 
         view = inflater.inflate(R.layout.fragment_map, container,false);
 
@@ -294,7 +298,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
 
     // 사용자가 GPS 활성 시켰는지 검사
-
     private boolean checkLocationServicesStatus() {
 
         Log.d("!!!!!", "checkLocationServicesStatus :");
@@ -430,7 +433,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
             findLocation(locationResult);
             mFusedLocationClient.removeLocationUpdates(locationCallback);   // 루프 한 번만 돌게 하기
 
-            LoadingDialog.loadingDialog.dismiss();   // 로딩창 없애기
+            if(LoadingDialog.loadingDialog != null) {
+
+                LoadingDialog.loadingDialog.dismiss();   // 로딩창 없애기
+            }
         }
     };
 

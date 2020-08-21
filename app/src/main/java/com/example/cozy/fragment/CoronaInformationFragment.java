@@ -1,5 +1,6 @@
 package com.example.cozy.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -16,7 +17,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.cozy.Activity.MainActivity;
+import com.example.cozy.BackPressCloseHandler;
 import com.example.cozy.Constant;
+import com.example.cozy.Inferface.OnBackPressedListener;
 import com.example.cozy.Server.Get;
 import com.example.cozy.R;
 import com.example.cozy.Server.Post;
@@ -24,6 +28,8 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.DefaultValueFormatter;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -35,14 +41,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class CoronaInformationFragment extends Fragment {
+public class CoronaInformationFragment extends Fragment  {
 
     private View view;
     public String jsonString = "";
     public String temporaryString,liveDate,overseasInflowNumber,nationalOccurenceNumber,totalInfecteeNumber,accumulationInfecteeNumber,casualtyNumber;
 
     private String[] forwardToServer = new String[2];
-
 
     String infectee[][] = new String [19][2];
     // 0: region, 1: infecteeNumber
@@ -225,58 +230,47 @@ public class CoronaInformationFragment extends Fragment {
 
         Log.d("!!!!!","setPieChart");
 
-        String temp[][] = new String[1][2];
-
         pieChart = (PieChart) view.findViewById(R.id.piechart);
 
         pieChart.setUsePercentValues(true);
         pieChart.getDescription().setEnabled(false);
-        pieChart.setExtraOffsets(5,10,5,10);   // 간격 띄우기
-
+        pieChart.setExtraOffsets(7,7,7,7);   // 간격 띄우기
         pieChart.setDrawCenterText(true);
-
         pieChart.setDragDecelerationFrictionCoef(0.2f);   // 드래그해서 얼마나 돌아가게 할까
         //pieChart.setTouchEnabled(false);
-        pieChart.setRotationEnabled(false);
-
+        pieChart.setRotationEnabled(false);   // 그래프 회전 여부
         pieChart.setDrawHoleEnabled(true);   // 가운데 원형 가능 여부
         pieChart.setHoleColor(Color.WHITE);
+        pieChart.setHoleRadius(35f);   // 가운데 원형 반지름
+        pieChart.setTransparentCircleRadius(35f);   // 불투명한 원형 부분 설정할 수 있음
         pieChart.setEntryLabelColor(Color.BLACK);   // 차트 항목별 제목 색깔
-
         pieChart.getLegend().setEnabled(false);   // 범례 없애기
-
+        //pieChart.setUsePercentValues(true);
+        //pieChart.animateY(1000, Easing.EasingOption.EaseInOutCubic); // 애니메이션
 
         ArrayList city = new ArrayList();
 
-        for(int index = 0; index < 5; index++) {
+        for(int index = 4; index >=0 ; index--) {
             city.add(new PieEntry(Float.parseFloat(infectee[index][1]), infectee[index][0]));
         }
-
-        //pieChart.animateY(1000, Easing.EasingOption.EaseInOutCubic); // 애니메이션
 
         PieDataSet dataSet = new PieDataSet(city,"Cities");   // 항목
         dataSet.setSliceSpace(3f);   // 차트들 사이 간격
         dataSet.setSelectionShift(3f);   // 클릭하면 커짐
-        dataSet.setColors(Color.BLUE);
-
+        dataSet.setColors(ColorTemplate.LIBERTY_COLORS);
         dataSet.setValueTextColor(Color.BLACK);
         dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);   // 항목 이름 밖으로
         ///dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);   // 퍼센트 밖으로
-
         //dataSet.setValueLineColor(ColorTemplate.COLOR_NONE);   // 설명하는 선 없애기
-
         dataSet.setValueLinePart1OffsetPercentage(100f);   // When valuePosition is OutsideSlice, indicates offset as percentage out of the slice size
         dataSet.setValueLinePart1Length(0.6f);   // When valuePosition is OutsideSlice, indicates length of first half of the line
         dataSet.setValueLinePart2Length(0.2f);   // When valuePosition is OutsideSlice, indicates length of second half of the line
-
-        //dataSet.setDrawValues(true);
         dataSet.setValueTextSize(10f);
 
         PieData data = new PieData(dataSet);   // 퍼센트
-        data.setValueTextSize(13f);
+        data.setValueFormatter(new PercentFormatter(pieChart));
+        data.setValueTextSize(8.5f);
         data.setValueTextColor(Color.WHITE);
-
-        //data.setDrawValues(true);
 
         pieChart.setData(data);
     }

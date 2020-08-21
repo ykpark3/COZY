@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -64,6 +66,7 @@ public class ComparisionMovingLineFragment extends Fragment {
     public ComparisionMovingLineFragment(MainActivity mainActivity){
         this.mainActivity = mainActivity;
     }
+
 
     @Nullable
     @Override
@@ -132,6 +135,7 @@ public class ComparisionMovingLineFragment extends Fragment {
     }
 
     // 선택한 km에 따라 circle 추가
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void drawCircle(int radius, int zoom) {
 
         //확진자 동선 마커리스트와 총값 초기화
@@ -171,7 +175,9 @@ public class ComparisionMovingLineFragment extends Fragment {
         }
 
         wholeMarkerList = wholeMarkerList + " 이상입니다.";
-        mainActivity.ttsClient.play(wholeMarkerList);
+
+
+        mainActivity.startTTS(wholeMarkerList);
     }
 
 
