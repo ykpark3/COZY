@@ -1,6 +1,5 @@
-package com.example.cozy.fragment;
+package com.example.cozy.Fragment;
 
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -20,6 +19,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.cozy.Activity.MainActivity;
+import com.example.cozy.Constant;
 import com.example.cozy.Server.Post;
 import com.example.cozy.R;
 import com.example.cozy.UI.LoadingDialog;
@@ -36,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -48,20 +50,24 @@ public class ComparisionMovingLineFragment extends Fragment {
     private Circle circle;
 
     private String[] forwardToServer = new String[8];
-
+    public List<String> markerList;
+    public int markerCount;
 
     private Marker confirmerMarker = null;
     private LatLng confirmerLatLng;
     private Address confirmerAddress;
+    private MainActivity mainActivity;
 
     private LoadingDialog loadingDialog = new LoadingDialog();
+
+    public ComparisionMovingLineFragment(MainActivity mainActivity){
+        this.mainActivity = mainActivity;
+    }
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        Log.d("!!!!!", "onCreateView");
 
         View view = inflater.inflate(R.layout.fragment_comparision_moving_line, container, false);
 
@@ -127,7 +133,13 @@ public class ComparisionMovingLineFragment extends Fragment {
 
     // 선택한 km에 따라 circle 추가
     private void drawCircle(int radius, int zoom) {
-        Log.d("!!!!!", "addCircle");
+
+        //확진자 동선 마커리스트와 총값 초기화
+        String wholeMarkerList = "";
+        markerCount = 0;
+
+        //마커를 저장할 리스트 생성
+        markerList = new ArrayList<>();
 
         MapFragment.mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
 
@@ -152,6 +164,14 @@ public class ComparisionMovingLineFragment extends Fragment {
         }
 
         connectPost();
+
+        for(Object object : markerList){
+            wholeMarkerList = wholeMarkerList + object.toString();
+
+        }
+
+        wholeMarkerList = wholeMarkerList + " 이상입니다.";
+        mainActivity.ttsClient.play(wholeMarkerList);
     }
 
 
@@ -278,10 +298,16 @@ public class ComparisionMovingLineFragment extends Fragment {
         if(buildingName != null) {
 
             markerOptions.snippet(markerSnippet + " " + buildingName);
+            markerList.add(getDateString(visitDate,markerCount) +" "+markerSnippet + ", " + buildingName+ "\n");
+
         }
         else {
             markerOptions.snippet(markerSnippet);
+            markerList.add(getDateString(visitDate,markerCount) +" "+markerSnippet + "\n");
         }
+
+        markerCount++;
+
         markerOptions.draggable(true);
         //markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));   // 마커 색상 변경
         markerOptions.alpha(0.5f);   // 투명도 지정하기
@@ -293,5 +319,23 @@ public class ComparisionMovingLineFragment extends Fragment {
 
         confirmerMarker = MapFragment.mMap.addMarker(markerOptions);
 
+    }
+
+    public String getDateString(String inputtedString,int markerCount){
+        int month,day;
+        String countString="";
+        inputtedString = inputtedString.replaceAll(" ","");
+
+        if(markerCount<11){
+            countString = Constant.NUMBER_KOKEAN_1[markerCount];
+        }
+        else{
+            countString = countString + Constant.NUMBER_KOKEAN_3[markerCount/10 - 1] + Constant.NUMBER_KOKEAN_2[markerCount % 10 - 1];
+        }
+
+        month = Integer.parseInt(inputtedString.substring(5,7));
+        day = Integer.parseInt(inputtedString.substring(8,10));
+
+        return countString + " 번째 확진자 동선 정보, " + month + "월 " + month  + "일,";
     }
 }

@@ -1,4 +1,4 @@
-package com.example.cozy.fragment;
+package com.example.cozy.Fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

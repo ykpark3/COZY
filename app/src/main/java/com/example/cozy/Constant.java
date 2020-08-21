@@ -9,6 +9,9 @@ public final class Constant {
     public final static String ADRRESS_DATABASE_TABLE_NAME = "userAdrress";
     public final static String REGISER_MY_ADRRESS = "내 주소 추가하기";
 
+    public final static String[] NUMBER_KOKEAN_1 = {"첫","두","세","네","다섯","여섯","일곱","여덟","아웃", "열"};
+    public final static String[] NUMBER_KOKEAN_2 = {"한","두","세","네","다섯","여섯","일곱","여덟","아웃", "열"};
+    public final static String[] NUMBER_KOKEAN_3 = {"열 ","스물 ","서른 ","마흔 ","쉰 ","예순 ","일흔 ","여든 ","아흔 ", "백"};
 
 
 

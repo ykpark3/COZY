@@ -1,17 +1,14 @@
-package com.example.cozy.fragment;
+package com.example.cozy.Fragment;
 
-import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.example.cozy.Adapter.IntroViewPagerAdapter;
 import com.example.cozy.Constant;
 import com.example.cozy.Data.IntroImageViewData;
+import com.example.cozy.UI.InformationDialog;
 import com.example.cozy.UI.IntroViewPager;
 import com.example.cozy.Server.Get;
 import com.example.cozy.Activity.MainActivity;
@@ -56,7 +54,7 @@ public class IntroFragment extends Fragment {
     private MainActivity mainActivity;
 
     public IntroFragment(MainActivity mainActivity) {
-        Log.d("introe","gt");
+
         this.mainActivity = mainActivity;
     }
 
@@ -70,6 +68,17 @@ public class IntroFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        mainActivity.changeOriginBackgroundColor();
+
+        //information 버튼 이벤트 처리
+        ImageButton informationButton = (ImageButton)view.findViewById(R.id.informationButton);
+        informationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getInformation(view);
+            }
+        });
 
         //타이틀 글씨 색 변경
         TextView textView = (TextView) view.findViewById(R.id.titleTextView);
@@ -139,7 +148,6 @@ public class IntroFragment extends Fragment {
 
         introImageViewDataArrayList = new ArrayList<IntroImageViewData>();
 
-
         getCoronaInformation();
 
         DecimalFormat numberFormat = new DecimalFormat("###,###,###");
@@ -183,6 +191,11 @@ public class IntroFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void getInformation(View view){
+        InformationDialog informationDialog = new InformationDialog(getActivity());
+        informationDialog.makeInformationDialog();
     }
 
 }

@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -14,6 +15,9 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.TransitionDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -27,11 +31,11 @@ import com.example.cozy.Data.Database;
 import com.example.cozy.R;
 import com.example.cozy.SpeakingAPI.STTAPI;
 import com.example.cozy.SpeakingAPI.TTSAPI;
-import com.example.cozy.fragment.ComparisionMovingLineFragment;
-import com.example.cozy.fragment.CoronaInformationFragment;
-import com.example.cozy.fragment.IntroFragment;
-import com.example.cozy.fragment.MapFragment;
-import com.example.cozy.fragment.MovingLineFragment;
+import com.example.cozy.Fragment.ComparisionMovingLineFragment;
+import com.example.cozy.Fragment.CoronaInformationFragment;
+import com.example.cozy.Fragment.IntroFragment;
+import com.example.cozy.Fragment.MapFragment;
+import com.example.cozy.Fragment.MovingLineFragment;
 
 import com.kakao.sdk.newtoneapi.SpeechRecognizerClient;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerManager;
@@ -54,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private LayoutInflater layoutInflater;
     private Database adrressDatabase;
 
+    private static final int PERMISSIONS_REQUEST_CODE = 100;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +72,15 @@ public class MainActivity extends AppCompatActivity {
         //데이타 베이스
         adrressDatabase = Database.getInstance(MainActivity.this);
 
-        //권한을 확인하는 부분, 권한 중 하나라도 퍼미션 거부되어있는 경우우
+        //권한을 확인하는 부분, 권한 중 하나라도 퍼미션 거부되어있는 경우
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
             //권한 요청
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE);
+
         } else {
             //모든 권한이 퍼미션되어있는 경우 실행.
             startUsingSpeechAPI();
@@ -78,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
         //tts 클라이언트 생성
         ttsClient = new TextToSpeechClient.Builder()
-                .setSpeechMode(TextToSpeechClient.NEWTONE_TALK_2)     // 음성합성방식
+                .setSpeechMode(TextToSpeechClient.NEWTONE_TALK_1)     // 음성합성방식
                 .setSpeechSpeed(1.0)            // 발음 속도(0.5~4.0)
                 .setSpeechVoice(TextToSpeechClient.VOICE_WOMAN_READ_CALM)  //TTS 음색 모드 설정(여성 차분한 낭독체)
                 .setListener(new TTSAPI())
@@ -101,20 +111,25 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("ResourceType")
     public void changeBackgroundColor(){
         LinearLayout mainLayout = findViewById(R.id.main_layout);
-        mainLayout.setBackgroundColor(Color.parseColor(getString(R.color.newbackgroundcolor)));
 
-        LinearLayout fragmentLayout = findViewById(R.id.fragment_container);
-        fragmentLayout.setBackgroundColor(Color.parseColor(getString(R.color.newbackgroundcolor)));
+        ColorDrawable[] color = {new ColorDrawable(Color.parseColor(getString(R.color.mainBackgroundColor))),
+                new ColorDrawable(Color.parseColor(getString(R.color.newbackgroundcolor)))};
+
+        TransitionDrawable mainLayoutTransition = new TransitionDrawable(color);
+
+        if(Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+             mainLayout.setBackgroundDrawable(mainLayoutTransition);}
+        else{
+                mainLayout.setBackground(mainLayoutTransition);
+        }
+        mainLayoutTransition.startTransition(700);
     }
 
     @SuppressLint("ResourceType")
     public void changeOriginBackgroundColor(){
 
         LinearLayout mainLayout = findViewById(R.id.main_layout);
-        mainLayout.setBackgroundColor(Color.parseColor(getString(R.color.backgroundColor)));
-
-        LinearLayout fragmentLayout = findViewById(R.id.fragment_container);
-        fragmentLayout.setBackgroundColor(Color.parseColor(getString(R.color.backgroundColor)));
+        mainLayout.setBackgroundColor(Color.parseColor(getString(R.color.mainBackgroundColor)));
     }
 
 
@@ -131,9 +146,6 @@ public class MainActivity extends AppCompatActivity {
             checkPermissionGranted();
             return;
         }
-
-        changeBackgroundColor();
-
         speakButtonText(textView);
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -141,6 +153,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.replace(R.id.fragment_container, new CoronaInformationFragment());
         fragmentTransaction.commit();
+
+        changeBackgroundColor();
     }
 
     public void movingLineButton(View view) {
@@ -158,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.replace(R.id.fragment_container, new MovingLineFragment());
         fragmentTransaction.commit();
+
+        changeBackgroundColor();
     }
 
     public void comparisionMovingLineButton(View view) {
@@ -173,8 +189,10 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_right);
         fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.replace(R.id.fragment_container, new ComparisionMovingLineFragment());
+        fragmentTransaction.replace(R.id.fragment_container, new ComparisionMovingLineFragment(this));
         fragmentTransaction.commit();
+
+        changeBackgroundColor();
     }
 
 
@@ -195,6 +213,10 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
 
     }*/
+
+    public void gotToBackStage(View view){
+        onBackPressed();
+    }
 
     public void mikeButton(View view) {
 
@@ -240,14 +262,21 @@ public class MainActivity extends AppCompatActivity {
 
         //권한을 확인하는 부분, 권한 중 하나라도 퍼미션 거부되어있는 경우
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //사용자가 맨 처음에 거절을 눌러서 하나라도 퍼미션이 거부된 경우
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE);
-            } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)
+                    || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE);
+
+            }
+            else {
                 // 사용자가 거부하면서 다시 묻지 않기를 클릭 -> 권한이 없다고 사용자에게 직접 알림.
-                Toast.makeText(this, "권한 Permission이 거부됐습니다. 어플을 사용하시려면 설정(앱 정보)에서 Permission을 허용해야 합니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "권한이 거부됐습니다. 어플을 사용하시려면 설정에서 허용해주세요.", Toast.LENGTH_SHORT).show();
             }
         } else {
             startUsingSpeechAPI();
@@ -263,13 +292,19 @@ public class MainActivity extends AppCompatActivity {
 
     //퍼미션 체크 후 콜백 메소드
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        Log.d("!!!!!@@@",String.valueOf(grantResults.length));
+
         switch (requestCode) {
             case REQUEST_CODE_AUDIO_AND_WRITE_EXTERNAL_STORAGE:
 
                 //모든 권한에 동의한경우 start 메소드 실행
-                if (grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 1
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[3] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "권한 승인에 동의했습니다.", Toast.LENGTH_SHORT).show();
                     startUsingSpeechAPI();
                 }

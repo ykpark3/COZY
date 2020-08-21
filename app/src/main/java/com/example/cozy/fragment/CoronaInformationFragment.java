@@ -1,4 +1,4 @@
-package com.example.cozy.fragment;
+package com.example.cozy.Fragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,15 +18,12 @@ import androidx.fragment.app.Fragment;
 import com.example.cozy.Constant;
 import com.example.cozy.Server.Get;
 import com.example.cozy.R;
-import com.example.cozy.Server.Post;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.DefaultValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;

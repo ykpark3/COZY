@@ -9,24 +9,40 @@
     android:background="@drawable/button2"
     android:orientation="vertical">
 
-    <TextView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center_horizontal|top"
-        android:padding="13dp"
-        android:text="확진자 동선"
-        android:textColor="#5776ff"
-        android:textSize="30dp"
-        android:textStyle="bold" />
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal|top"
+            android:padding="13dp"
+            android:text="확진자 동선"
+            android:textColor="#5776ff"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/transparent"
+            android:onClick="gotToBackStage"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back1" />
+
+    </FrameLayout>
 
     <ListView
         android:id="@+id/adrressButtonListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="5dp"
         android:layout_weight="5"
-        android:divider="#ffffff"
-        android:layout_marginBottom="5dp">
+        android:divider="#ffffff">
 
     </ListView>
 </LinearLayout>

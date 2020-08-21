@@ -8,6 +8,7 @@ import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -272,12 +273,13 @@ public class MyAdrressAdapter extends BaseAdapter {
         }
 
         getCoronaInformation(jsonString);
+        Log.d("here",jsonString);
     }
 
 
     // 서버에서 확진자 정보 받아오기
     private void getCoronaInformation(String jsonString) {
-        String visitDate, latitude, longitude;
+        String visitDate, latitude, longitude,buildingName;
 
         try {
 
@@ -291,12 +293,13 @@ public class MyAdrressAdapter extends BaseAdapter {
                 visitDate = confirmerJSONObject.getString("visitDate");
                 latitude = confirmerJSONObject.getString("latitude");
                 longitude = confirmerJSONObject.getString("longitude");
+                buildingName = confirmerJSONObject.getString("buildingName");
 
                 String adrress = getCurrentAddress(Double.parseDouble(latitude), Double.parseDouble(longitude));
 
                 //해당 주소만을 저장.
                 if (adrress.replaceAll(" ", "").contains(nowAdrress))
-                    movingLineAdrressList.add(new AdrressData(visitDate, latitude, longitude, adrress));
+                    movingLineAdrressList.add(new AdrressData(visitDate, latitude, longitude, adrress,buildingName));
 
             }
         } catch (JSONException e) {

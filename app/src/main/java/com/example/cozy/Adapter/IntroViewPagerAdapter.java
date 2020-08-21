@@ -1,10 +1,12 @@
 package com.example.cozy.Adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,6 +121,7 @@ public class IntroViewPagerAdapter extends PagerAdapter {
         imageView.setImageResource(introImageViewDataArrayList.get(position).getImage());
     }
 
+    @SuppressLint("ResourceType")
     public void drawBarChart(){
 
         //막대 그래프
@@ -130,7 +133,7 @@ public class IntroViewPagerAdapter extends PagerAdapter {
         barChart.setScaleYEnabled(false);
         barChart.setDoubleTapToZoomEnabled(false);
 
-        barChart.animateY(2000);
+        //barChart.animateY(2000);
 
         ValueFormatter xAxisFormatter = new DayAxisValueFormatter(barChart);
 
@@ -160,9 +163,11 @@ public class IntroViewPagerAdapter extends PagerAdapter {
         List<BarEntry> entry_chart = new ArrayList<>();
         BarData barData = new BarData();
 
-        //여기서 일일 확진자수 3일전가지 int값으로 받아오기
-        for(int index =0; index <4;index++)
-            entry_chart.add(new BarEntry(index+1, infecteeNumber[index]));
+
+        //여기서 일일 확진자수 3일전까지 int값으로 받아오기
+        for(int index =0; index <4;index++) {
+            entry_chart.add(new BarEntry(index + 1, infecteeNumber[index]));
+        }
 
         BarDataSet barDataSet = new BarDataSet(entry_chart, "");
         barDataSet.setColors(Color.parseColor(context.getString(R.color.newbackgroundorangecolor)));
