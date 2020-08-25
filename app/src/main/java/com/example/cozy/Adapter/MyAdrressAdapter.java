@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.RelativeSizeSpan;
@@ -16,6 +17,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -33,7 +35,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -130,6 +137,7 @@ public class MyAdrressAdapter extends BaseAdapter {
     //버튼 이벤트리스너 설정하는
     public void setButtonClickListener(final TextView buttonClickInMovingLine) {
         buttonClickInMovingLine.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
 
@@ -170,6 +178,15 @@ public class MyAdrressAdapter extends BaseAdapter {
                     url[7] = String.valueOf(latitudeLogitude[1]);
 
                     connectPost();
+
+                    //날짜 순 정렬
+                    movingLineAdrressList.sort(new Comparator<AdrressData>() {
+                        @Override
+                        public int compare(AdrressData adrressData, AdrressData adrressData1) {
+
+                            return adrressData.getVisitDate().compareTo(adrressData1.getVisitDate());
+                        }
+                    });
 
                     MovingLineDialog movingLineDialog = new MovingLineDialog(context, movingLineAdrressList);
                     movingLineDialog.makeMovingLineDialog();
@@ -213,6 +230,7 @@ public class MyAdrressAdapter extends BaseAdapter {
             return currentAddress.getAddressLine(0);
         }
     }
+
 
     // 사용자가 선택한 시군구에 따른 위도와 경도 값 찾기
     private String[] getLatitudeLongitude(String district) {

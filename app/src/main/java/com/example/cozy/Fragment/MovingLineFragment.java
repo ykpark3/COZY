@@ -21,6 +21,7 @@ import com.example.cozy.Data.Database;
 import com.example.cozy.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MovingLineFragment extends Fragment {
 

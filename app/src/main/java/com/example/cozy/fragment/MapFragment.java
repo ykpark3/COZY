@@ -196,7 +196,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
     }
 
 
-
     // 사용자가 GPS 활성 시켰는지 검사
     private boolean checkLocationServicesStatus() {
 
@@ -303,7 +302,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
     private String getCurrentAddress(LatLng latlng) {
 
         Log.d("!!!!!", "getCurrentAddress: ");
-
 
         // 지오코더: GPS를 주소로 변환
         //Geocoder geocoder = new Geocoder(((MainActivity)MainActivity.context), Locale.getDefault());

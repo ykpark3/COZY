@@ -176,6 +176,7 @@ public class IntroViewPagerAdapter extends PagerAdapter {
         barDataSet.setValueTextColor(Color.parseColor("#ffffff"));
         barChart.setData(barData);
         barChart.setDescription(null);
+        barChart.setTouchEnabled(false);
 
         Legend legend = barChart.getLegend();
         legend.setEnabled(false);

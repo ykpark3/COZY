@@ -48,9 +48,6 @@ public class Post extends AsyncTask<String, String, String> {
 
                 while(index < urls.length) {
 
-                    Log.d("!!!!!", urls[index]);
-                    Log.d("!!!!!", urls[index+1]);
-
                     jsonObject.accumulate(urls[index], urls[index+1]);
 
                     index = index +2;
@@ -112,9 +109,6 @@ public class Post extends AsyncTask<String, String, String> {
                 StringBuffer buffer = new StringBuffer();
 
                 String line = "";
-
-
-                Log.d("!!!!!", "Reader"+reader);
 
                 while ((line = reader.readLine()) != null) {
 

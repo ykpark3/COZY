@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -81,6 +83,7 @@ public class ComparisionMovingLineFragment extends Fragment {
 
 
         radioButton1.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
                 Log.d("!!!!!", "11");
@@ -89,6 +92,7 @@ public class ComparisionMovingLineFragment extends Fragment {
         });
 
         radioButton2.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
                 Log.d("!!!!!", "22");
@@ -97,6 +101,7 @@ public class ComparisionMovingLineFragment extends Fragment {
         });
 
         radioButton3.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View view) {
                 Log.d("!!!!!", "33");
@@ -132,6 +137,7 @@ public class ComparisionMovingLineFragment extends Fragment {
     }
 
     // 선택한 km에 따라 circle 추가
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void drawCircle(int radius, int zoom) {
 
         //확진자 동선 마커리스트와 총값 초기화
@@ -167,11 +173,12 @@ public class ComparisionMovingLineFragment extends Fragment {
 
         for(Object object : markerList){
             wholeMarkerList = wholeMarkerList + object.toString();
-
         }
 
         wholeMarkerList = wholeMarkerList + " 이상입니다.";
-        mainActivity.ttsClient.play(wholeMarkerList);
+
+
+        mainActivity.startTTS(wholeMarkerList);
     }
 
 
@@ -241,7 +248,7 @@ public class ComparisionMovingLineFragment extends Fragment {
         }
     }
 
-    // 지오코더를 이용해 현재 주소 찾기
+    // 리버스 지오코더를 이용해 현재 주소 찾기
     private String getConfirmerAddress(Double latitude, Double longitude) {
         Log.d("!!!!!", "getCurrentAddress :");
 
@@ -322,7 +329,7 @@ public class ComparisionMovingLineFragment extends Fragment {
     }
 
     public String getDateString(String inputtedString,int markerCount){
-        int month,day;
+        int month, day;
         String countString="";
         inputtedString = inputtedString.replaceAll(" ","");
 

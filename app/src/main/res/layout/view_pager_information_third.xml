@@ -12,7 +12,7 @@
         android:fontFamily="@font/nanumsquarer"
         android:gravity="bottom"
         android:paddingLeft="25dp"
-        android:text="주변 확진자 동선 확인"
+        android:text="COZY 음성비서 이용"
         android:textColor="@color/newbackgroundorangecolor"
 
         android:textSize="24dp" />

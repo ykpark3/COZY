@@ -1,7 +1,6 @@
 package com.example.cozy.Adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -27,7 +26,7 @@ public class InformationViewPagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 6;
     }
 
     @Override
@@ -55,6 +54,19 @@ public class InformationViewPagerAdapter extends PagerAdapter {
             case 2:
                 view = layoutInflater.inflate(R.layout.view_pager_information_third, container, false);
                 break;
+
+            case 3:
+                view = layoutInflater.inflate(R.layout.view_pager_information_fourth, container, false);
+                break;
+
+            case 4:
+                view = layoutInflater.inflate(R.layout.view_pager_information_fifth, container, false);
+                break;
+
+            case 5:
+                view = layoutInflater.inflate(R.layout.view_pager_information_sixth, container, false);
+                break;
+
         }
 
         container.addView(view);
