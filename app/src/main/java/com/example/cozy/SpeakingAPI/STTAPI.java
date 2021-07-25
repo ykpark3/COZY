@@ -4,16 +4,22 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.example.cozy.Constant;
 import com.example.cozy.Fragment.MapFragment;
+
+import com.example.cozy.Fragment.MapFragment;
+
 import androidx.annotation.RequiresApi;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.cozy.Activity.MainActivity;
 import com.example.cozy.R;
 import com.example.cozy.Server.Post;
+import com.example.cozy.UI.MikeDialog;
 import com.kakao.sdk.newtoneapi.SpeechRecognizeListener;
 import com.kakao.sdk.newtoneapi.SpeechRecognizerClient;
 import com.kakao.sdk.newtoneapi.TextToSpeechClient;
@@ -28,38 +34,34 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-public class STTAPI implements SpeechRecognizeListener{
-    public TextToSpeechClient ttsClient;
-    public String sstString;
+public class STTAPI implements SpeechRecognizeListener {
+    public String sstString, chatbotString;
     private MainActivity mainActivity;
+    private MikeDialog mikeDialog;
+    public Boolean isCancled=false;
 
     String[] forwardToServer = new String[8];
     String[] areaInformation = new String[8];
-    //String[] chatBotMessage = new String[4];
 
     String sido, sigoongu;
 
-    public STTAPI(MainActivity mainActivity){
+
+    public STTAPI(MainActivity mainActivity, MikeDialog mikeDialog) {
 
         this.mainActivity = mainActivity;
-
-        //tts 클라이언트 생성
-        ttsClient = new TextToSpeechClient.Builder()
-                .setSpeechMode(TextToSpeechClient.NEWTONE_TALK_2)     // 음성합성방식
-                .setSpeechSpeed(1.0)            // 발음 속도(0.5~4.0)
-                .setSpeechVoice(TextToSpeechClient.VOICE_WOMAN_READ_CALM)  //TTS 음색 모드 설정(여성 차분한 낭독체)
-                .setListener(new TTSAPI(mainActivity))
-                .build();
+        this.mikeDialog = mikeDialog;
     }
 
     @Override
     public void onReady() {
         Log.d("MainActivity", "모든 준비가 완료 되었습니다.");
+        isCancled=false;
     }
 
     @Override
     public void onBeginningOfSpeech() {
         Log.d("MainActivity", "말하기 시작 했습니다.");
+
     }
 
     @Override
@@ -68,17 +70,22 @@ public class STTAPI implements SpeechRecognizeListener{
     }
 
     @Override
-    public void onError(int errorCode, String errorMsg) {
+    public void onError(final int errorCode, String errorMsg) {
         Log.d("MainActivity", "STT API ERROR.");
 
         mainActivity.runOnUiThread(new Runnable() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void run() {
-                mainActivity.mainMikeButton.setImageResource(R.drawable.main_mike1);
-                mainActivity.mainMikeButton.setBackground(mainActivity.getDrawable(R.drawable.mike_button));
-                mainActivity.mikeLottieAnimation.setVisibility(LottieAnimationView.INVISIBLE);
-                mainActivity.mikeLottieAnimation.pauseAnimation();
+                mikeDialog.mikeButton.setImageResource(R.drawable.main_mike1);
+                mikeDialog.mikeLottieAnimation.setAnimation("test8.json");
+                mikeDialog.mikeLottieAnimation.setVisibility(LottieAnimationView.INVISIBLE);
+                mikeDialog.mikeLottieAnimation.pauseAnimation();
+
+                if (!isCancled){
+                    mikeDialog.mikeTextView.setText("잘 들리지 않거나 오류가 발생했어요!\nCOZY 에게 말해보세요!");
+                    readChatbotMessage("다시 말해보세요.");
+                }
             }
         });
     }
@@ -98,6 +105,7 @@ public class STTAPI implements SpeechRecognizeListener{
         Log.d("MainActivity", "Result texts: " + texts);
         Log.d("MainActivity", "Result!!!!! sstString: " + sstString);
 
+
         forwardToServer[0] = "url";
         forwardToServer[1] = "http://ec2-13-209-74-229.ap-northeast-2.compute.amazonaws.com:3000/danbee";
         forwardToServer[2] = "userInput";
@@ -107,9 +115,35 @@ public class STTAPI implements SpeechRecognizeListener{
         forwardToServer[6] = "longitude";
         forwardToServer[7] = String.valueOf(MapFragment.currentPosition.longitude);
 
-        connectServer(forwardToServer);
+
+        mainActivity.runOnUiThread(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void run() {
+                mikeDialog.mikeTextView.setText(sstString);
+                mikeDialog.loadingInMike();
+                Log.d("test1", "wwwwwwwwww");
+            }
+        });
+
+
+        //다른 쓰레드에서 처리.
+        Runnable nameOfRunnable = new Runnable()
+        {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void run()
+            {
+                connectServer(forwardToServer);
+            }
+        };
+
+        Thread thread = new Thread(nameOfRunnable);
+        thread.start();
 
     }
+
+
 
     @Override
     public void onAudioLevel(float audioLevel) {
@@ -119,19 +153,6 @@ public class STTAPI implements SpeechRecognizeListener{
     @Override
     public void onFinished() {
         Log.d("MainActivity", "STT API FINISHED.");
-
-        mainActivity.runOnUiThread(new Runnable() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void run() {
-                mainActivity.mainMikeButton.setImageResource(R.drawable.main_mike1);
-                mainActivity.mainMikeButton.setBackground(mainActivity.getDrawable(R.drawable.mike_button));
-                mainActivity.mikeLottieAnimation.setVisibility(LottieAnimationView.INVISIBLE);
-                mainActivity.mikeLottieAnimation.pauseAnimation();
-            }
-        });
-
-        //ttsClient.play(sstString + "에 대해 검색합니다.");
     }
 
 
@@ -139,7 +160,7 @@ public class STTAPI implements SpeechRecognizeListener{
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void connectServer(String[] server) {
 
-        Log.d("!!!!!","connectPost");
+        Log.d("!!!!!", "connectPost");
 
         Post post = new Post();
         post.execute(server);
@@ -148,7 +169,7 @@ public class STTAPI implements SpeechRecognizeListener{
         String jsonString = "";
 
         try {
-            Log.d("!!!!!","json"+jsonString);
+            Log.d("!!!!!", "json" + jsonString);
 
             jsonString= jsonString + post.get();
 
@@ -168,7 +189,6 @@ public class STTAPI implements SpeechRecognizeListener{
         }
 
     }
-
 
     // 사용자 입력 분류하기
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -190,18 +210,19 @@ public class STTAPI implements SpeechRecognizeListener{
             switch (type) {
                 case "코로나정보":
                     getServerCoronaInformation(jsonObject);
+                    break;
                 case "확진자동선":
                     getServerInformationMovingLine(jsonObject);
+                    break;
                 case "동선비교":
                     getServerComparisionMovingLine(jsonObject);
-
+                    break;
             }
         } catch (JSONException e) {
 
             Log.d("!!!!! here","JSONException");
             e.printStackTrace();
         }
-
     }
 
 
@@ -215,22 +236,23 @@ public class STTAPI implements SpeechRecognizeListener{
 
         try {
             message = jsonObject.getString("message");
-
-            Log.d("!!!!!","message :"+message);
-
-            if(message.contains("이런 의미")) {
-                message = "제가 도움을 드리지 못하는 문제입니다. 다시 말씀해주세요.";
-            }
-
-            Log.d("!!!!!","message :"+message);
-
-            mainActivity.startTTS(message);
-
-        } catch (JSONException e) {
-
-            Log.d("!!!!! here","JSONException");
+        } catch (Exception e){
+            onError(0000,"NoValue");
+            Log.d("noValueError","NoValueError");
             e.printStackTrace();
+            return;
         }
+
+        Log.d("!!!!!","message :"+message);
+
+        if(message.contains("이런 의미")) {
+            message = "제가 도움을 드리지 못하는 문제입니다. 다시 말씀해주세요.";
+        }
+
+        Log.d("!!!!!","message :"+message);
+
+        readChatbotMessage(message);
+
     }
 
 
@@ -264,11 +286,11 @@ public class STTAPI implements SpeechRecognizeListener{
             }
             else if (sido.equals("") || sigoongu.equals("")) {   // sido, sigoongu 비어 있는 경우
 
-                mainActivity.startTTS("지역명을 더 자세히 말씀해주세요.");
+                readChatbotMessage("지역명을 더 자세히 말씀해주세요.");
             }
 
             else {
-                mainActivity.startTTS("해당 지역에는 확진자가 존재하지 않습니다.");
+                readChatbotMessage("해당 지역에는 확진자가 존재하지 않습니다.");
             }
 
 
@@ -342,7 +364,9 @@ public class STTAPI implements SpeechRecognizeListener{
                 wholeMarkerList = wholeMarkerList + " 이상입니다.";
             }
 
-            mainActivity.startTTS(wholeMarkerList);
+
+            readChatbotMessage(wholeMarkerList);
+
 
         } catch (JSONException e) {
 
@@ -350,7 +374,6 @@ public class STTAPI implements SpeechRecognizeListener{
             e.printStackTrace();
         }
     }
-
 
     // 지오코더를 이용해 위도,경도 찾기
    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -488,7 +511,7 @@ public class STTAPI implements SpeechRecognizeListener{
 
             Log.d("!!!!!","whole :"+wholeMarkerList);
 
-            mainActivity.startTTS(wholeMarkerList);
+            readChatbotMessage(wholeMarkerList);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -545,4 +568,26 @@ public class STTAPI implements SpeechRecognizeListener{
         }
     }
 
+
+    public void readChatbotMessage(String message) {
+
+        Log.d("!!!!!","readChatbotMessage");
+
+        chatbotString = message;
+
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mainActivity.runOnUiThread(new Runnable() {
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                    @Override
+                    public void run() {
+                        Log.d("!!!!!", "wwwwwwwwww");
+                        mikeDialog.startTTS(chatbotString);
+                    }
+                });
+
+            }
+        }, 500);
+    }
 }

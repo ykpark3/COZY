@@ -26,6 +26,7 @@ import com.example.cozy.Constant;
 import com.example.cozy.Server.Post;
 import com.example.cozy.R;
 import com.example.cozy.UI.LoadingDialog;
+import com.example.cozy.UI.MikeDialog;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
@@ -59,6 +60,7 @@ public class ComparisionMovingLineFragment extends Fragment {
     private LatLng confirmerLatLng;
     private Address confirmerAddress;
     private MainActivity mainActivity;
+    private int nowRadioButtonNumber;
 
     private LoadingDialog loadingDialog = new LoadingDialog();
 
@@ -87,6 +89,7 @@ public class ComparisionMovingLineFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Log.d("!!!!!", "11");
+                nowRadioButtonNumber = 1;
                 drawCircle(1000, 14);
             }
         });
@@ -96,6 +99,7 @@ public class ComparisionMovingLineFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Log.d("!!!!!", "22");
+                nowRadioButtonNumber = 2;
                 drawCircle(2000, 13);
             }
         });
@@ -105,6 +109,7 @@ public class ComparisionMovingLineFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Log.d("!!!!!", "33");
+                nowRadioButtonNumber = 3;
                 drawCircle(3000, 12);
             }
         });
@@ -127,7 +132,6 @@ public class ComparisionMovingLineFragment extends Fragment {
         forwardToServer[2] = "kilometer";
         forwardToServer[4] = "latitude";
         forwardToServer[6] = "longitude";
-
 
         FragmentManager fm = getChildFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
@@ -171,14 +175,16 @@ public class ComparisionMovingLineFragment extends Fragment {
 
         connectPost();
 
+        if(markerList.size() == 0)
+            return;
+
         for(Object object : markerList){
             wholeMarkerList = wholeMarkerList + object.toString();
         }
 
         wholeMarkerList = wholeMarkerList + " 이상입니다.";
 
-
-        mainActivity.startTTS(wholeMarkerList);
+        MikeDialog mikeDialog = new MikeDialog(getActivity(),mainActivity,wholeMarkerList,nowRadioButtonNumber);
     }
 
 

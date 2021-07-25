@@ -292,6 +292,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Activit
 
             if(LoadingDialog.loadingDialog != null) {
 
+
                 LoadingDialog.loadingDialog.dismiss();   // 로딩창 없애기
             }
         }
