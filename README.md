@@ -10,6 +10,13 @@
 - 코로나19 상황에서, 시각장애인의 열악한 정보 접근성
 - 시각 장애인을 위한 유용한 코로나19 정보 제공 서비스의 부재<br><br>
 
+##  📚  Stack & Library
+- Android/Java
+- Danbi Library
+- Google Map API
+- Kakao STT/TTS
+- 코로나 확진자 정보 API <br><br>
+
 ##  📝  Features
 ### 1. 직관적이고 편리한 코로나 관련 정보 제공.
 ```
@@ -35,12 +42,6 @@
 ```
 <br>
 
-##  📚  Stack & Library
-- Android/Java
-- Danbi Library
-- Google Map API
-- Kakao STT/TTS
-- 코로나 확진자 정보 API <br><br>
 
 ##  🖥️  Preview
 
@@ -52,6 +53,7 @@
 
 ### 확진자 동선 확인 & 동선 비교
 <p align="center"> <img src = "https://user-images.githubusercontent.com/64072741/126885860-809ed73b-bcc1-4fa5-92ce-9a0b5f1b97e1.jpg"> </p><br>
+
 
 ## 🎓 I Learned
 - 처음 경험한 안드로이드 어플리케이션 팀 프로젝트입니다.
