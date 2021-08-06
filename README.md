@@ -47,6 +47,9 @@
 ### 메인 메뉴 & 음성 비서 시스템
 <p align="center"> <img src = "https://user-images.githubusercontent.com/64072741/126885861-0a33835a-d123-4378-8765-919ebb3ada92.jpg"> </p><br>
 
+### 사용 가이드 & 코로나 정보
+<p align="center"> <img src = "https://user-images.githubusercontent.com/63557248/128546663-a44e3de6-b888-4f1d-b2b8-c3b48f03d105.png"> </p><br>
+
 ### 확진자 동선 확인 & 동선 비교
 <p align="center"> <img src = "https://user-images.githubusercontent.com/64072741/126885860-809ed73b-bcc1-4fa5-92ce-9a0b5f1b97e1.jpg"> </p><br>
 
